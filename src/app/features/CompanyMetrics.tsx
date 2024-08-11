@@ -1,4 +1,4 @@
-import { Line } from '@ant-design/charts';
+import { Area, AreaConfig } from '@ant-design/charts';
 import { MetricService } from 'tnn-sdk';
 import { useEffect } from 'react';
 import { useState } from 'react';
@@ -19,16 +19,18 @@ export default function CompanyMetrics() {
             .then(setData);
     }, []);
 
-    const config = {
+    const config: AreaConfig = {
         data,
         height: 400,
+        color: ['#274060', '#0099ff'],
+        areaStyle: { fillOpacity: 1 },
         xField: 'yearMonth',
         yField: 'value',
         seriesField: 'category',
         point: {
             size: 5,
-            shape: 'diamond',
+            shape: 'circle',
         },
     };
-    return <Line {...config} />;
+    return <Area {...config} />;
 }
