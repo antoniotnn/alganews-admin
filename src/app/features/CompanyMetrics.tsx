@@ -53,6 +53,7 @@ export default function CompanyMetrics() {
                 }
             }
         },
+        yAxis: false,
         xAxis: {
             label: {
                 formatter(item) {
