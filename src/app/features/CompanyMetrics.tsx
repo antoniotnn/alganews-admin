@@ -2,8 +2,9 @@ import { Area, AreaConfig } from '@ant-design/charts';
 import { MetricService } from 'tnn-sdk';
 import { useEffect } from 'react';
 import { useState } from 'react';
-import {format} from 'date-fns';
+import {format, parseISO} from 'date-fns';
 import transformDataIntoAntdChart from '../../core/utils/transformDataIntoAntdChart';
+import {ptBR} from "date-fns/locale";
 
 export default function CompanyMetrics() {
     const [data, setData] = useState<
@@ -35,10 +36,27 @@ export default function CompanyMetrics() {
                 }
             }
         },
+        tooltip: {
+            title(title)  {
+                return format(new Date(title), 'MMMM yyyy', {
+                    locale: ptBR
+                });
+            },
+            formatter(data) {
+                return {
+                    name: data.category === 'totalRevenues' ? 'Receitas' : 'Despesas',
+                    value: (data.value as number).toLocaleString('pt-BR', {
+                        currency: 'BRL',
+                        style: 'currency',
+                        maximumFractionDigits: 2,
+                    }),
+                }
+            }
+        },
         xAxis: {
             label: {
-                formatter: (item) => {
-                    return format(new Date(item), 'MMM/yyyy')
+                formatter(item) {
+                    return format(parseISO(item), 'MM/yyyy')
                 },
             },
         },
