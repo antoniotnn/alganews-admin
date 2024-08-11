@@ -2,6 +2,7 @@ import { Area, AreaConfig } from '@ant-design/charts';
 import { MetricService } from 'tnn-sdk';
 import { useEffect } from 'react';
 import { useState } from 'react';
+import {format} from 'date-fns';
 import transformDataIntoAntdChart from '../../core/utils/transformDataIntoAntdChart';
 
 export default function CompanyMetrics() {
@@ -33,6 +34,13 @@ export default function CompanyMetrics() {
                     return legend === 'totalRevenues' ? 'Receitas' : 'Despesas';
                 }
             }
+        },
+        xAxis: {
+            label: {
+                formatter: (item) => {
+                    return format(new Date(item), 'MMM/yyyy')
+                },
+            },
         },
         point: {
             size: 5,
