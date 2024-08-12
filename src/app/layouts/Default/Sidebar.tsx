@@ -10,6 +10,8 @@ export default function DefaultLayoutSidebar() {
         <Sider
             width={200}
             className='site-layout-background'
+            breakpoint='lg'
+            collapsedWidth='0'
         >
             <Menu
                 mode='inline'
