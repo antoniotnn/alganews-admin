@@ -7,14 +7,14 @@ import './index.css';
 import {Provider} from "react-redux";
 import {store} from './core/store';
 import DefaultLayout from "./app/layouts/Default";
-import App from "./App";
+import Routes from "./routes";
 
 
 ReactDOM.render(
     <React.StrictMode>
         <Provider store={store}>
             <DefaultLayout>
-                <App />
+                <Routes />
             </DefaultLayout>
         </Provider>
 

@@ -1,10 +1,10 @@
-import CompanyMetrics from "./app/features/CompanyMetrics";
+import CompanyMetrics from "../features/CompanyMetrics";
 import {Col, Divider, Row, Space, Typography} from "antd";
-import LatestPosts from "./app/features/LatestPosts";
+import LatestPosts from "../features/LatestPosts";
 
 const { Title, Paragraph } = Typography;
 
-function App() {
+function HomeView() {
     return (
         <Space
             direction='vertical'
@@ -34,4 +34,4 @@ function App() {
     );
 }
 
-export default App;
+export default HomeView;
