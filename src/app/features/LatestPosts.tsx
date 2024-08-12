@@ -1,6 +1,6 @@
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import useLatestPosts from "../../core/hooks/useLatestPosts";
-import {Card, Col, Row, Avatar} from "antd";
+import {Avatar, Card, Col, Row} from "antd";
 
 export default function LatestPosts() {
     const {fetchPosts, posts} = useLatestPosts();
@@ -25,7 +25,7 @@ export default function LatestPosts() {
                             }
                         >
                             <Card.Meta
-                                avatar={<Avatar src={post.editor.avatarUrls.small} />}
+                                avatar={<Avatar src={post.editor.avatarUrls.small}/>}
                                 title={post.title}
                             />
                         </Card>
