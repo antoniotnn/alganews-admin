@@ -9,7 +9,7 @@ import {
     FallOutlined,
     RiseOutlined,
 } from '@ant-design/icons';
-import {useHistory} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
@@ -42,14 +42,18 @@ export default function DefaultLayoutSidebar() {
                         onClick={() => history.push('/usuarios')}
                         icon={<TableOutlined />}
                     >
-                        Consulta
+                        <Link to={'/usuarios'}>
+                            Consulta
+                        </Link>
                     </Menu.Item>
                     <Menu.Item
                         key='/usuarios/cadastro'
                         icon={<PlusCircleOutlined />}
                         onClick={() => history.push('/usuarios/cadastro')}
                     >
-                        Cadastro
+                        <Link to={'/usuarios/cadastro'}>
+                            Cadastro
+                        </Link>
                     </Menu.Item>
                 </SubMenu>
                 <SubMenu
@@ -62,14 +66,18 @@ export default function DefaultLayoutSidebar() {
                         icon={<TableOutlined />}
                         onClick={() => history.push('/pagamentos')}
                     >
-                        Consulta
+                        <Link to={'/pagamentos'}>
+                            Consulta
+                        </Link>
                     </Menu.Item>
                     <Menu.Item
                         key='/pagamentos/cadastro'
                         icon={<PlusCircleOutlined />}
                         onClick={() => history.push('/pagamentos/cadastro')}
                     >
-                        Cadastro
+                        <Link to={'/pagamentos/cadastro'}>
+                            Cadastro
+                        </Link>
                     </Menu.Item>
                 </SubMenu>
                 <SubMenu
@@ -82,14 +90,18 @@ export default function DefaultLayoutSidebar() {
                         icon={<FallOutlined />}
                         onClick={() => history.push('/fluxo-de-caixa/despesas')}
                     >
-                        Despesa
+                        <Link to={'/fluxo-de-caixa/despesas'}>
+                            Despesa
+                        </Link>
                     </Menu.Item>
                     <Menu.Item
                         key='/fluxo-de-caixa/receitas'
                         icon={<RiseOutlined />}
                         onClick={() => history.push('/fluxo-de-caixa/receitas')}
                     >
-                        Receita
+                        <Link to={'/fluxo-de-caixa/receitas'}>
+                            Receita
+                        </Link>
                     </Menu.Item>
                 </SubMenu>
             </Menu>
