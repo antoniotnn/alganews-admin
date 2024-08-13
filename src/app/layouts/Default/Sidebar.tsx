@@ -9,13 +9,20 @@ import {
     FallOutlined,
     RiseOutlined,
 } from '@ant-design/icons';
-import {Link, useHistory} from "react-router-dom";
+import {Link, useHistory, useLocation} from "react-router-dom";
+import {useEffect} from "react";
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
 
 export default function DefaultLayoutSidebar() {
     const history = useHistory();
+    const location = useLocation();
+
+    useEffect(() => {
+        console.log('location', location);
+    }, [location]);
+
     return (
         <Sider
             width={200}
@@ -25,15 +32,15 @@ export default function DefaultLayoutSidebar() {
         >
             <Menu
                 mode='inline'
-                defaultSelectedKeys={['1']}
-                defaultOpenKeys={['sub1']}
+                defaultSelectedKeys={[location.pathname]}
+                defaultOpenKeys={[location.pathname.split('/')[1]]}
                 style={{ height: '100%', borderRight: 0 }}
             >
-                <Menu.Item key={'0'} icon={<HomeOutlined />}>
-                    Home
+                <Menu.Item key={'/'} icon={<HomeOutlined />}>
+                    <Link to={'/'}>Home</Link>
                 </Menu.Item>
                 <SubMenu
-                    key='sub1'
+                    key='usuarios'
                     icon={<UserOutlined />}
                     title='Usuários'
                 >
@@ -57,7 +64,7 @@ export default function DefaultLayoutSidebar() {
                     </Menu.Item>
                 </SubMenu>
                 <SubMenu
-                    key='sub2'
+                    key='pagamentos'
                     icon={<LaptopOutlined />}
                     title='Pagamentos'
                 >
@@ -81,7 +88,7 @@ export default function DefaultLayoutSidebar() {
                     </Menu.Item>
                 </SubMenu>
                 <SubMenu
-                    key='sub3'
+                    key='fluxo-de-caixa'
                     icon={<DiffOutlined />}
                     title='Fluxo de Caixa'
                 >
