@@ -8,14 +8,17 @@ import {Provider} from "react-redux";
 import {store} from './core/store';
 import DefaultLayout from "./app/layouts/Default";
 import Routes from "./routes";
+import {BrowserRouter} from "react-router-dom";
 
 
 ReactDOM.render(
     <React.StrictMode>
         <Provider store={store}>
-            <DefaultLayout>
-                <Routes />
-            </DefaultLayout>
+            <BrowserRouter>
+                <DefaultLayout>
+                    <Routes />
+                </DefaultLayout>
+            </BrowserRouter>
         </Provider>
 
     </React.StrictMode>,
