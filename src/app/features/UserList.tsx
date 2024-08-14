@@ -1,46 +1,80 @@
 import useUsers from "../../core/hooks/useUsers";
 import {useEffect} from "react";
-import {Table} from "antd";
+import {Table, Tag, Switch, Button} from "antd";
 import {User} from "tnn-sdk";
+import {format} from "date-fns";
+import {EyeOutlined, EditOutlined} from "@ant-design/icons";
 
 export default function UserList() {
-  const { users, fetchUsers } = useUsers();
+    const {users, fetchUsers} = useUsers();
 
-  useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
-  
-  return <>
-    <Table<User.Summary>
-        dataSource={users}
-        columns={[
-          {
-            dataIndex: 'name',
-            title: 'Nome'
-          },
-          {
-            dataIndex: 'email',
-            title: 'Email'
-          },
-          {
-            dataIndex: 'role',
-            title: 'Perfil'
-          },
-          {
-            dataIndex: 'createdAt',
-            title: 'Criação'
-          },
-          {
-            dataIndex: 'active',
-            title: 'Ativo'
-          },
-          {
-            dataIndex: 'id',
-            title: 'Ações'
-          }
-        ]}
-    >
+    useEffect(() => {
+        fetchUsers();
+    }, [fetchUsers]);
 
-    </Table>
-  </>;
+    return <>
+        <Table<User.Summary>
+            dataSource={users}
+            columns={[
+                {
+                    dataIndex: 'name',
+                    title: 'Nome'
+                },
+                {
+                    dataIndex: 'email',
+                    title: 'Email'
+                },
+                {
+                    dataIndex: 'role',
+                    title: 'Perfil',
+                    align: 'center',
+                    render(role) {
+                        return (
+                            <Tag color={role === 'MANAGER' ? 'red' : 'blue'}>
+                                {role === 'EDITOR' ?
+                                    'Editor'
+                                    : role === 'MANAGER'
+                                    ? 'Gerente' : 'Assistente'}
+                            </Tag>
+                        );
+                    }
+                },
+                {
+                    dataIndex: 'createdAt',
+                    title: 'Criação',
+                    align: 'center',
+                    render(createdAt: string) {
+                        return format(new Date(createdAt), 'dd/MM/yyyy');
+                    }
+                },
+                {
+                    dataIndex: 'active',
+                    title: 'Ativo',
+                    align: 'center',
+                    render(active: boolean) {
+                        return <Switch defaultChecked={active} />
+                    }
+                },
+                {
+                    dataIndex: 'id',
+                    title: 'Ações',
+                    align: 'center',
+                    render() {
+                        return <>
+                            <Button
+                                size='small'
+                                icon={<EyeOutlined />}
+                            />
+                            <Button
+                                size='small'
+                                icon={<EditOutlined />}
+                            />
+                        </>;
+                    }
+                }
+            ]}
+        >
+
+        </Table>
+    </>;
 }
