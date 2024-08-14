@@ -6,7 +6,7 @@ import {format} from "date-fns";
 import {EyeOutlined, EditOutlined} from "@ant-design/icons";
 
 export default function UserList() {
-    const {users, fetchUsers} = useUsers();
+    const {users, fetchUsers, toggleUerStatus} = useUsers();
 
     useEffect(() => {
         fetchUsers();
@@ -68,8 +68,13 @@ export default function UserList() {
                     dataIndex: 'active',
                     title: 'Ativo',
                     align: 'center',
-                    render(active: boolean) {
-                        return <Switch defaultChecked={active} />
+                    render(active: boolean, user) {
+                        return <Switch
+                            onChange={()=> {
+                                toggleUerStatus(user)
+                            }}
+                            defaultChecked={active}
+                        />
                     }
                 },
                 {

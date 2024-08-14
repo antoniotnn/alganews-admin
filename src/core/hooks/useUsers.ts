@@ -2,6 +2,7 @@ import {useCallback} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../store";
 import * as UserActions from "../store/User.reducer";
+import {User} from "tnn-sdk";
 
 export default function useUsers() {
     const dispatch = useDispatch();
@@ -12,9 +13,14 @@ export default function useUsers() {
         dispatch(UserActions.getAllUsers())
     }, [dispatch]);
 
+    const toggleUerStatus = useCallback((user: User.Detailed | User.Summary) => {
+        dispatch(UserActions.toggleUserStatus(user))
+    }, [dispatch]);
+
     return {
         fetchUsers,
         users,
-        fetching
+        fetching,
+        toggleUerStatus
     };
 }
