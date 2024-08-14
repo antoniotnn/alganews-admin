@@ -1,6 +1,6 @@
 import useUsers from "../../core/hooks/useUsers";
 import {useEffect} from "react";
-import {Table, Tag, Switch, Button} from "antd";
+import {Table, Tag, Switch, Button, Avatar, Typography, Space} from "antd";
 import {User} from "tnn-sdk";
 import {format} from "date-fns";
 import {EyeOutlined, EditOutlined} from "@ant-design/icons";
@@ -18,7 +18,16 @@ export default function UserList() {
             columns={[
                 {
                     dataIndex: 'name',
-                    title: 'Nome'
+                    title: 'Nome',
+                    render(name: string, row) {
+                        return <Space>
+                            <Avatar
+                                size='small'
+                                src={row.avatarUrls.small}
+                            />
+                            <Typography.Text>{ name }</Typography.Text>
+                        </Space>
+                    }
                 },
                 {
                     dataIndex: 'email',
