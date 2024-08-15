@@ -46,15 +46,6 @@ export default createReducer(initialState, (builder) => {
         .addCase(getAllUsers.fulfilled, (state, action) => {
             state.list = action.payload;
         })
-        // para atualizar só no front end o dado alterado, será removido depois. para fazer uma nova chamada pro back end para pegar todos os dados atualizados
-        .addCase(toggleUserStatus.fulfilled, (state, action) => {
-            state.list = state.list.map(user => {
-                if (user.id === action.payload.id) {
-                    return {...user, active: !user.active};
-                }
-                return user;
-            });
-        })
         .addMatcher(success, (state) => {
             state.fetching = false
         });
