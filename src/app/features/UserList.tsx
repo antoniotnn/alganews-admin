@@ -28,7 +28,7 @@ export default function UserList() {
 
             <Card>
                 <Input
-                    style={{ marginBottom: 8, display: 'block' }}
+                    style={{marginBottom: 8, display: 'block'}}
                     value={selectedKeys[0]}
                     placeholder={`Buscar ${displayName || dataIndex}`}
                     onChange={(e) => {
@@ -40,16 +40,16 @@ export default function UserList() {
                     <Button
                         type={'primary'}
                         size={'small'}
-                        style={{ width: 90 }}
+                        style={{width: 90}}
                         onClick={() => confirm()}
-                        icon={<SearchOutlined />}
+                        icon={<SearchOutlined/>}
                     >
                         Buscar
                     </Button>
                     <Button
                         onClick={clearFilters}
                         size={'small'}
-                        style={{ width: 90 }}
+                        style={{width: 90}}
                     >
                         Limpar
                     </Button>
@@ -58,14 +58,14 @@ export default function UserList() {
         ),
         filterIcon: (filtered: boolean) => (
             <SearchOutlined
-                style={{ color: filtered ? '#0099ff' : undefined }}
+                style={{color: filtered ? '#0099ff' : undefined}}
             />
         ),
         onFilter: (value, record) =>
             record[dataIndex]
-                    .toString()
-                    .toLowerCase()
-                    .includes((value as string).toLowerCase())
+                .toString()
+                .toLowerCase()
+                .includes((value as string).toLowerCase())
     });
 
 
@@ -73,28 +73,26 @@ export default function UserList() {
         <Table<User.Summary>
             loading={fetching}
             dataSource={users}
-            // pagination={false}
-            pagination={{ pageSize: 2, current: 2 }}
+            pagination={false}
             columns={[
+                {
+                    dataIndex: 'avatarUrls',
+                    title: '',
+                    width: 48,
+                    fixed: 'left',
+                    render(avatarUrls: User.Summary['avatarUrls']) {
+                        return <Avatar
+                            size='small'
+                            src={avatarUrls.small}
+                        />
+                    }
+                },
                 {
                     dataIndex: 'name',
                     title: 'Nome',
                     ...getColumnSearchProps('name', 'Nome'),
                     width: 160,
-                    render(name: string, row) {
-                        return <Space>
-                            <Avatar
-                                size='small'
-                                src={row.avatarUrls.small}
-                            />
-                            <Typography.Text
-                                ellipsis
-                                style={{ maxWidth: 120 }}
-                            >
-                                { name }
-                            </Typography.Text>
-                        </Space>
-                    }
+                    ellipsis: true
                 },
                 {
                     dataIndex: 'email',
@@ -107,13 +105,14 @@ export default function UserList() {
                     dataIndex: 'role',
                     title: 'Perfil',
                     align: 'center',
+                    width: 100,
                     render(role) {
                         return (
                             <Tag color={role === 'MANAGER' ? 'red' : 'blue'}>
                                 {role === 'EDITOR' ?
                                     'Editor'
                                     : role === 'MANAGER'
-                                    ? 'Gerente' : 'Assistente'}
+                                        ? 'Gerente' : 'Assistente'}
                             </Tag>
                         );
                     }
@@ -122,6 +121,7 @@ export default function UserList() {
                     dataIndex: 'createdAt',
                     title: 'Criação',
                     align: 'center',
+                    width: 120,
                     render(createdAt: string) {
                         return format(new Date(createdAt), 'dd/MM/yyyy');
                     }
@@ -130,9 +130,10 @@ export default function UserList() {
                     dataIndex: 'active',
                     title: 'Ativo',
                     align: 'center',
+                    width: 100,
                     render(active: boolean, user) {
                         return <Switch
-                            onChange={()=> {
+                            onChange={() => {
                                 toggleUerStatus(user)
                             }}
                             defaultChecked={active}
@@ -143,15 +144,16 @@ export default function UserList() {
                     dataIndex: 'id',
                     title: 'Ações',
                     align: 'center',
+                    width: 100,
                     render() {
                         return <>
                             <Button
                                 size='small'
-                                icon={<EyeOutlined />}
+                                icon={<EyeOutlined/>}
                             />
                             <Button
                                 size='small'
-                                icon={<EditOutlined />}
+                                icon={<EditOutlined/>}
                             />
                         </>;
                     }
