@@ -18,10 +18,14 @@ export const getAllUsers = createAsyncThunk(
 
 export const toggleUserStatus = createAsyncThunk(
     'user/toggleUserStatus',
-    async (user: User.Summary | User.Detailed) =>
+    async (user: User.Summary | User.Detailed) => {
+
         user.active
-            ? UserService.deactivateExistingUser(user.id)
-            : UserService.activateExistingUser(user.id)
+            ? await UserService.deactivateExistingUser(user.id)
+            : await UserService.activateExistingUser(user.id);
+
+        return user;
+    }
 );
 
 export default createReducer(initialState, (builder) => {
@@ -41,6 +45,15 @@ export default createReducer(initialState, (builder) => {
     builder
         .addCase(getAllUsers.fulfilled, (state, action) => {
             state.list = action.payload;
+        })
+        // para atualizar só no front end o dado alterado, será removido depois. para fazer uma nova chamada pro back end para pegar todos os dados atualizados
+        .addCase(toggleUserStatus.fulfilled, (state, action) => {
+            state.list = state.list.map(user => {
+                if (user.id === action.payload.id) {
+                    return {...user, active: !user.active};
+                }
+                return user;
+            });
         })
         .addMatcher(success, (state) => {
             state.fetching = false
