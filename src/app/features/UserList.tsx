@@ -61,15 +61,11 @@ export default function UserList() {
                 style={{ color: filtered ? '#0099ff' : undefined }}
             />
         ),
-        // @ts-ignore
         onFilter: (value, record) =>
             record[dataIndex]
-                ? record[dataIndex]
                     .toString()
                     .toLowerCase()
                     .includes((value as string).toLowerCase())
-                : '',
-
     });
 
 
