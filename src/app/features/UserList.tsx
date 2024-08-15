@@ -1,9 +1,10 @@
 import useUsers from "../../core/hooks/useUsers";
 import {useEffect} from "react";
-import {Table, Tag, Switch, Button, Avatar, Typography, Space} from "antd";
+import {Table, Tag, Switch, Button, Avatar, Typography, Space, Card, Input} from "antd";
 import {User} from "tnn-sdk";
 import {format} from "date-fns";
-import {EyeOutlined, EditOutlined} from "@ant-design/icons";
+import {EyeOutlined, EditOutlined, SearchOutlined} from "@ant-design/icons";
+import {ColumnProps} from "antd/es/table";
 
 export default function UserList() {
     const {users, fetchUsers, toggleUerStatus} = useUsers();
@@ -12,6 +13,66 @@ export default function UserList() {
         fetchUsers();
     }, [fetchUsers]);
 
+    const getColumnSearchProps = (
+        dataIndex: keyof User.Summary,
+        displayName?: string
+    ): ColumnProps<User.Summary> => ({
+        filterDropdown: (
+            {
+                selectedKeys,
+                setSelectedKeys,
+                confirm,
+                clearFilters
+            }
+        ) => (
+
+            <Card>
+                <Input
+                    style={{ marginBottom: 8, display: 'block' }}
+                    value={selectedKeys[0]}
+                    placeholder={`Buscar ${displayName || dataIndex}`}
+                    onChange={(e) => {
+                        setSelectedKeys(e.target.value ? [e.target.value] : []);
+                    }}
+                    onPressEnter={() => confirm()}
+                />
+                <Space>
+                    <Button
+                        type={'primary'}
+                        size={'small'}
+                        style={{ width: 90 }}
+                        onClick={() => confirm()}
+                        icon={<SearchOutlined />}
+                    >
+                        Buscar
+                    </Button>
+                    <Button
+                        onClick={clearFilters}
+                        size={'small'}
+                        style={{ width: 90 }}
+                    >
+                        Limpar
+                    </Button>
+                </Space>
+            </Card>
+        ),
+        filterIcon: (filtered: boolean) => (
+            <SearchOutlined
+                style={{ color: filtered ? '#0099ff' : undefined }}
+            />
+        ),
+        // @ts-ignore
+        onFilter: (value, record) =>
+            record[dataIndex]
+                ? record[dataIndex]
+                    .toString()
+                    .toLowerCase()
+                    .includes((value as string).toLowerCase())
+                : '',
+
+    });
+
+
     return <>
         <Table<User.Summary>
             dataSource={users}
@@ -19,6 +80,7 @@ export default function UserList() {
                 {
                     dataIndex: 'name',
                     title: 'Nome',
+                    ...getColumnSearchProps('name', 'Nome'),
                     width: 160,
                     render(name: string, row) {
                         return <Space>
@@ -39,7 +101,8 @@ export default function UserList() {
                     dataIndex: 'email',
                     title: 'Email',
                     ellipsis: true,
-                    width: 240
+                    width: 240,
+                    ...getColumnSearchProps('email', 'Email')
                 },
                 {
                     dataIndex: 'role',
