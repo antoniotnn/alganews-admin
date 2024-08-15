@@ -7,7 +7,7 @@ import {EyeOutlined, EditOutlined, SearchOutlined} from "@ant-design/icons";
 import {ColumnProps} from "antd/es/table";
 
 export default function UserList() {
-    const {users, fetchUsers, toggleUerStatus} = useUsers();
+    const {users, fetchUsers, toggleUerStatus, fetching} = useUsers();
 
     useEffect(() => {
         fetchUsers();
@@ -71,6 +71,7 @@ export default function UserList() {
 
     return <>
         <Table<User.Summary>
+            loading={fetching}
             dataSource={users}
             columns={[
                 {
