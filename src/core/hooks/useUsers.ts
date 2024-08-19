@@ -13,7 +13,7 @@ export default function useUsers() {
         dispatch(UserActions.getAllUsers())
     }, [dispatch]);
 
-    const toggleUerStatus = useCallback(
+    const toggleUserStatus = useCallback(
         async (user: User.Detailed | User.Summary) => {
             await dispatch(UserActions.toggleUserStatus(user));
             dispatch(UserActions.getAllUsers());
@@ -25,6 +25,6 @@ export default function useUsers() {
         fetchUsers,
         users,
         fetching,
-        toggleUerStatus
+        toggleUserStatus
     };
 }
