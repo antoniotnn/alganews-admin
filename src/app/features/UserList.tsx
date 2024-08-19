@@ -1,9 +1,9 @@
 import useUsers from "../../core/hooks/useUsers";
 import {useEffect} from "react";
-import {Table, Tag, Switch, Button, Avatar, Typography, Space, Card, Input} from "antd";
+import {Avatar, Button, Card, Input, Space, Switch, Table, Tag} from "antd";
 import {User} from "tnn-sdk";
 import {format} from "date-fns";
-import {EyeOutlined, EditOutlined, SearchOutlined} from "@ant-design/icons";
+import {EditOutlined, EyeOutlined, SearchOutlined} from "@ant-design/icons";
 import {ColumnProps} from "antd/es/table";
 
 export default function UserList() {
@@ -80,6 +80,7 @@ export default function UserList() {
                     title: '',
                     width: 48,
                     fixed: 'left',
+                    responsive: ['xs'],
                     render(avatarUrls: User.Summary['avatarUrls']) {
                         return <Avatar
                             size='small'
@@ -97,6 +98,7 @@ export default function UserList() {
                 {
                     dataIndex: 'email',
                     title: 'Email',
+                    responsive: ['md'],
                     ellipsis: true,
                     width: 240,
                     ...getColumnSearchProps('email', 'Email')
@@ -122,6 +124,7 @@ export default function UserList() {
                     title: 'Criação',
                     align: 'center',
                     width: 120,
+                    responsive: ['lg'],
                     render(createdAt: string) {
                         return format(new Date(createdAt), 'dd/MM/yyyy');
                     }
