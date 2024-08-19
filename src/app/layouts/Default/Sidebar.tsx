@@ -1,16 +1,15 @@
-import { Menu, Layout } from 'antd';
+import {Layout, Menu} from 'antd';
 import {
-    UserOutlined,
-    LaptopOutlined,
     DiffOutlined,
-    HomeOutlined,
-    TableOutlined,
-    PlusCircleOutlined,
     FallOutlined,
+    HomeOutlined,
+    LaptopOutlined,
+    PlusCircleOutlined,
     RiseOutlined,
+    TableOutlined,
+    UserOutlined,
 } from '@ant-design/icons';
 import {Link, useHistory, useLocation} from "react-router-dom";
-import {useEffect} from "react";
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
@@ -18,10 +17,6 @@ const { SubMenu } = Menu;
 export default function DefaultLayoutSidebar() {
     const history = useHistory();
     const location = useLocation();
-
-    useEffect(() => {
-        console.log('location', location);
-    }, [location]);
 
     return (
         <Sider
