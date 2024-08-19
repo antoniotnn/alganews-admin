@@ -1,4 +1,6 @@
-import {Avatar, Col, DatePicker, Divider, Form, Input, Row, Select} from "antd";
+import {Avatar, Col, DatePicker, Divider, Form, Input, Row, Select, Tabs} from "antd";
+
+const {TabPane} = Tabs;
 
 export default function UserForm() {
     return (
@@ -13,7 +15,7 @@ export default function UserForm() {
                     </Form.Item>
                     <Form.Item label={'Data de nascimento'}>
                         <DatePicker
-                            style={{ width: '100%'}}
+                            style={{width: '100%'}}
                             format={'DD/MM/YYYY'}
                         />
                     </Form.Item>
@@ -24,7 +26,7 @@ export default function UserForm() {
                     </Form.Item>
                 </Col>
                 <Col xs={24}>
-                    <Divider />
+                    <Divider/>
                 </Col>
                 <Col lg={12}>
                     <Form.Item label={'Perfil'}>
@@ -37,8 +39,27 @@ export default function UserForm() {
                 </Col>
                 <Col lg={12}>
                     <Form.Item label={'Email'}>
-                        <Input type='email' placeholder={'E.g.: contato@joao.silva'} />
+                        <Input type='email' placeholder={'E.g.: contato@joao.silva'}/>
                     </Form.Item>
+                </Col>
+                <Col lg={24}>
+                    <Divider/>
+                </Col>
+                <Col lg={24}>
+                    <Tabs defaultActiveKey={'personal'}>
+                        <TabPane
+                            key={'personal'}
+                            tab={'Dados pessoais'}
+                        >
+                            dados pessoais
+                        </TabPane>
+                        <TabPane
+                            key={'bankAccount'}
+                            tab={'Dados bancários'}
+                        >
+                            dados bancários
+                        </TabPane>
+                    </Tabs>
                 </Col>
             </Row>
         </Form>
