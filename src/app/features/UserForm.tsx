@@ -1,4 +1,5 @@
 import {Avatar, Col, DatePicker, Divider, Form, Input, Row, Select, Tabs} from "antd";
+import React from "react";
 
 const {TabPane} = Tabs;
 
@@ -94,6 +95,27 @@ export default function UserForm() {
                                         />
                                     </Form.Item>
                                 </Col>
+                                {
+                                    // Array(30)
+                                    //     .fill(null)
+
+                                        [1, 2, 3].map((_, index) => {
+                                            return <React.Fragment key={index}>
+                                                <Col lg={6}>
+                                                    <Form.Item label={'Habilidade'}>
+                                                        <Input
+                                                            placeholder={'E.g.: JavaScript'}
+                                                        />
+                                                    </Form.Item>
+                                                </Col>
+                                                <Col lg={2}>
+                                                    <Form.Item label={'%'}>
+                                                        <Input/>
+                                                    </Form.Item>
+                                                </Col>
+                                            </React.Fragment>
+                                        })
+                                }
 
                             </Row>
                         </TabPane>
