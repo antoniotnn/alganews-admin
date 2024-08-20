@@ -11,12 +11,12 @@ import {
     Upload,
     Button,
 } from 'antd';
-import React, { useCallback, useState } from 'react';
+import React, {useCallback, useState} from 'react';
 import {FileService, User} from 'tnn-sdk';
-import { UserOutlined } from '@ant-design/icons';
+import {UserOutlined} from '@ant-design/icons';
 import ImageCrop from 'antd-img-crop';
 
-const { TabPane } = Tabs;
+const {TabPane} = Tabs;
 
 export default function UserForm() {
     const [avatar, setAvatar] = useState('');
@@ -32,6 +32,19 @@ export default function UserForm() {
     return (
         <Form
             layout={'vertical'}
+            onFinishFailed={(fields) => {
+                const bankAccountErrors = fields.errorFields.reduce(
+                    (prev, current) =>
+                        current.name.includes('bankAccount')
+                            ? prev + 1
+                            : prev,
+                    0
+                );
+
+                if (bankAccountErrors >= 1) {
+                    window.alert(`Existem ${bankAccountErrors} erros na aba Dados bancários`);
+                }
+            }}
             onFinish={(form: User.Input) => {
                 console.log(form);
             }}
@@ -50,8 +63,8 @@ export default function UserForm() {
                             }}
                         >
                             <Avatar
-                                style={{ cursor: 'pointer' }}
-                                icon={<UserOutlined />}
+                                style={{cursor: 'pointer'}}
+                                icon={<UserOutlined/>}
                                 src={avatar}
                                 size={128}
                             />
@@ -63,7 +76,7 @@ export default function UserForm() {
                         required: true,
                         message: 'O campo é obrigatório'
                     }]}>
-                        <Input placeholder={'E.g.: João Silva'} />
+                        <Input placeholder={'E.g.: João Silva'}/>
                     </Form.Item>
                     <Form.Item
                         label={'Data de nascimento'}
@@ -74,7 +87,7 @@ export default function UserForm() {
                         }]}
                     >
                         <DatePicker
-                            style={{ width: '100%' }}
+                            style={{width: '100%'}}
                             format={'DD/MM/YYYY'}
                         />
                     </Form.Item>
@@ -84,11 +97,11 @@ export default function UserForm() {
                         required: true,
                         message: 'O campo é obrigatório'
                     }]}>
-                        <Input.TextArea rows={5} />
+                        <Input.TextArea rows={5}/>
                     </Form.Item>
                 </Col>
                 <Col xs={24}>
-                    <Divider />
+                    <Divider/>
                 </Col>
                 <Col lg={12}>
                     <Form.Item label={'Perfil'} name={'role'} rules={[{
@@ -120,7 +133,7 @@ export default function UserForm() {
                     </Form.Item>
                 </Col>
                 <Col lg={24}>
-                    <Divider />
+                    <Divider/>
                 </Col>
 
                 <Col lg={24}>
@@ -139,7 +152,7 @@ export default function UserForm() {
                                             message: 'O campo é obrigatório'
                                         }]}
                                     >
-                                        <Input placeholder={'E.g.: Brasil'} />
+                                        <Input placeholder={'E.g.: Brasil'}/>
                                     </Form.Item>
                                 </Col>
                                 <Col lg={8}>
@@ -165,7 +178,7 @@ export default function UserForm() {
                                             message: 'O campo é obrigatório'
                                         }]}
                                     >
-                                        <Input placeholder={'E.g.: Vitória'} />
+                                        <Input placeholder={'E.g.: Vitória'}/>
                                     </Form.Item>
                                 </Col>
                                 <Col lg={8}>
@@ -191,7 +204,7 @@ export default function UserForm() {
                                             message: 'O campo é obrigatório'
                                         }]}
                                     >
-                                        <Input placeholder={'111.222.333-44'} />
+                                        <Input placeholder={'111.222.333-44'}/>
                                     </Form.Item>
                                 </Col>
                                 <Col lg={8}>
@@ -203,7 +216,7 @@ export default function UserForm() {
                                             message: 'O campo é obrigatório'
                                         }]}
                                     >
-                                        <Input placeholder={'0'} />
+                                        <Input placeholder={'0'}/>
                                     </Form.Item>
                                 </Col>
                                 {[1, 2, 3].map((_, index) => {
@@ -236,7 +249,7 @@ export default function UserForm() {
                                                         message: ''
                                                     }]}
                                                 >
-                                                    <Input />
+                                                    <Input/>
                                                 </Form.Item>
                                             </Col>
                                         </React.Fragment>
@@ -259,7 +272,7 @@ export default function UserForm() {
                                             message: 'O campo é obrigatório'
                                         }]}
                                     >
-                                        <Input placeholder={'260'} />
+                                        <Input placeholder={'260'}/>
                                     </Form.Item>
                                 </Col>
                                 <Col lg={8}>
@@ -271,7 +284,7 @@ export default function UserForm() {
                                             message: 'O campo é obrigatório'
                                         }]}
                                     >
-                                        <Input placeholder={'0001'} />
+                                        <Input placeholder={'0001'}/>
                                     </Form.Item>
                                 </Col>
                                 <Col lg={8}>
@@ -283,7 +296,7 @@ export default function UserForm() {
                                             message: 'O campo é obrigatório'
                                         }]}
                                     >
-                                        <Input placeholder={'12345'} />
+                                        <Input placeholder={'12345'}/>
                                     </Form.Item>
                                 </Col>
                                 <Col lg={8}>
@@ -295,7 +308,7 @@ export default function UserForm() {
                                             message: 'O campo é obrigatório'
                                         }]}
                                     >
-                                        <Input placeholder={'1'} />
+                                        <Input placeholder={'1'}/>
                                     </Form.Item>
                                 </Col>
                                 <Col lg={8}>
