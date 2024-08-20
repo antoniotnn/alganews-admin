@@ -96,25 +96,22 @@ export default function UserForm() {
                                     </Form.Item>
                                 </Col>
                                 {
-                                    // Array(30)
-                                    //     .fill(null)
-
-                                        [1, 2, 3].map((_, index) => {
-                                            return <React.Fragment key={index}>
-                                                <Col lg={6}>
-                                                    <Form.Item label={'Habilidade'}>
-                                                        <Input
-                                                            placeholder={'E.g.: JavaScript'}
-                                                        />
-                                                    </Form.Item>
-                                                </Col>
-                                                <Col lg={2}>
-                                                    <Form.Item label={'%'}>
-                                                        <Input/>
-                                                    </Form.Item>
-                                                </Col>
-                                            </React.Fragment>
-                                        })
+                                    [1, 2, 3].map((_, index) => {
+                                        return <React.Fragment key={index}>
+                                            <Col lg={6}>
+                                                <Form.Item label={'Habilidade'}>
+                                                    <Input
+                                                        placeholder={'E.g.: JavaScript'}
+                                                    />
+                                                </Form.Item>
+                                            </Col>
+                                            <Col lg={2}>
+                                                <Form.Item label={'%'}>
+                                                    <Input/>
+                                                </Form.Item>
+                                            </Col>
+                                        </React.Fragment>
+                                    })
                                 }
 
                             </Row>
@@ -123,7 +120,44 @@ export default function UserForm() {
                             key={'bankAccount'}
                             tab={'Dados bancários'}
                         >
-                            dados bancários
+                            <Row gutter={24}>
+                                <Col lg={8}>
+                                    <Form.Item label={'Instituição'}>
+                                        <Input placeholder={'260'} />
+                                    </Form.Item>
+                                </Col>
+                                <Col lg={8}>
+                                    <Form.Item label={'Agência'}>
+                                        <Input placeholder={'0001'} />
+                                    </Form.Item>
+                                </Col>
+                                <Col lg={8}>
+                                    <Form.Item label={'Conta sem dígito'}>
+                                        <Input placeholder={'12345'} />
+                                    </Form.Item>
+                                </Col>
+                                <Col lg={8}>
+                                    <Form.Item label={'Dígito'}>
+                                        <Input placeholder={'1'} />
+                                    </Form.Item>
+                                </Col>
+                                <Col lg={8}>
+                                    <Form.Item label={'Tipo de conta'}>
+                                        <Select
+                                            placeholder={
+                                                'Selecione o tipo de conta'
+                                            }
+                                        >
+                                            <Select.Option value={'SAVING'}>
+                                                Conta poupança
+                                            </Select.Option>
+                                            <Select.Option value={'CHECKING'}>
+                                                Conta corrente
+                                            </Select.Option>
+                                        </Select>
+                                    </Form.Item>
+                                </Col>
+                            </Row>
                         </TabPane>
                     </Tabs>
                 </Col>
