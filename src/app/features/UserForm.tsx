@@ -26,9 +26,10 @@ export default function UserForm() {
                         aspect={1}
                     >
                         <Upload
+                            maxCount={1}
                             onRemove={() => setAvatar('')}
-                            beforeUpload={async file => {
-                                await handleAvatarUpload(file);
+                            beforeUpload={file => {
+                                handleAvatarUpload(file);
                                 return false;
                             }}
                         >
