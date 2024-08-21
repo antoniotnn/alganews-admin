@@ -11,7 +11,7 @@ import {
     Upload,
     Button,
 } from 'antd';
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {FileService, User} from 'tnn-sdk';
 import {UserOutlined} from '@ant-design/icons';
 import ImageCrop from 'antd-img-crop';
@@ -19,6 +19,8 @@ import ImageCrop from 'antd-img-crop';
 const {TabPane} = Tabs;
 
 export default function UserForm() {
+    const [form] = Form.useForm<User.Input>();
+
     const [avatar, setAvatar] = useState('');
     const [activeTab, setActiveTab] = useState<'personal' | 'bankAccount'>('personal');
 
@@ -30,8 +32,15 @@ export default function UserForm() {
         []
     );
 
+    useEffect(() => {
+        form.setFieldsValue({
+            avatarUrl: avatar || undefined,
+        });
+    }, [avatar, form]);
+
     return (
         <Form
+            form={form}
             layout={'vertical'}
             onFinishFailed={(fields) => {
                 let bankAccountErrors = 0;
@@ -82,6 +91,7 @@ export default function UserForm() {
                             />
                         </Upload>
                     </ImageCrop>
+                    <Form.Item name={'avatarUrl'} hidden />
                 </Col>
                 <Col lg={8}>
                     <Form.Item label={'Nome'} name={'name'} rules={[{
