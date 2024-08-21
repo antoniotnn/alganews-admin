@@ -9,12 +9,13 @@ import {
     Select,
     Tabs,
     Upload,
-    Button,
+    Button, notification,
 } from 'antd';
 import React, {useCallback, useEffect, useState} from 'react';
-import {FileService, User} from 'tnn-sdk';
+import {FileService, User, UserService} from 'tnn-sdk';
 import {UserOutlined} from '@ant-design/icons';
 import ImageCrop from 'antd-img-crop';
+import CustomError from "tnn-sdk/dist/utils/CustomError";
 
 const {TabPane} = Tabs;
 
@@ -66,8 +67,33 @@ export default function UserForm() {
 
                 if (personalDataErrors > bankAccountErrors) setActiveTab('personal');
             }}
-            onFinish={(form: User.Input) => {
-                console.log(form);
+            onFinish={async (user: User.Input) => {
+                try {
+                    await UserService.insertNewUser(user);
+                    notification.success({
+                        message: 'Sucesso',
+                        description: 'usuário criado com sucesso',
+                    });
+                } catch (error) {
+                    if (error instanceof CustomError) {
+                        if (error.data?.objects) {
+                            form.setFields(error.data.objects.map(error => {
+                                return {
+                                    name: error.name?.split('.') as string[],
+                                    errors: [error.userMessage]
+                                }
+                            }));
+                        }
+                        notification.error({
+                            message: 'Houve um erro',
+                            description: error.message,
+                        });
+                    } else {
+                        notification.error({
+                            message: 'Houve um erro',
+                        });
+                    }
+                }
             }}
         >
             <Row gutter={24} align={'middle'}>
@@ -91,7 +117,9 @@ export default function UserForm() {
                             />
                         </Upload>
                     </ImageCrop>
-                    <Form.Item name={'avatarUrl'} hidden />
+                    <Form.Item name={'avatarUrl'} hidden>
+                        <Input hidden />
+                    </Form.Item>
                 </Col>
                 <Col lg={8}>
                     <Form.Item label={'Nome'} name={'name'} rules={[{
@@ -316,7 +344,7 @@ export default function UserForm() {
                                 <Col lg={8}>
                                     <Form.Item
                                         label={'Conta sem dígito'}
-                                        name={['bankAccount', 'accountNumber']}
+                                        name={['bankAccount', 'number']}
                                         rules={[{
                                             required: true,
                                             message: 'O campo é obrigatório'
