@@ -20,6 +20,7 @@ const {TabPane} = Tabs;
 
 export default function UserForm() {
     const [avatar, setAvatar] = useState('');
+    const [activeTab, setActiveTab] = useState<'personal' | 'bankAccount'>('personal');
 
     const handleAvatarUpload = useCallback(
         async (file: File) => {
@@ -52,13 +53,9 @@ export default function UserForm() {
                     }
                 })
 
-                if (bankAccountErrors >= 1) {
-                    window.alert(`Existem ${bankAccountErrors} erros na aba dados bancários`);
-                }
-                if (personalDataErrors >= 1) {
-                    window.alert(`Existem ${personalDataErrors} erros na aba Dados pessoais`);
-                }
+                if (bankAccountErrors > personalDataErrors) setActiveTab('bankAccount');
 
+                if (personalDataErrors > bankAccountErrors) setActiveTab('personal');
             }}
             onFinish={(form: User.Input) => {
                 console.log(form);
@@ -152,7 +149,11 @@ export default function UserForm() {
                 </Col>
 
                 <Col lg={24}>
-                    <Tabs defaultActiveKey={'personal'}>
+                    <Tabs
+                        defaultActiveKey={'personal'}
+                        activeKey={activeTab}
+                        onChange={tab => setActiveTab(tab as 'personal' | 'bankAccount')}
+                    >
                         <TabPane
                             key={'personal'}
                             tab={'Dados pessoais'}
