@@ -33,17 +33,32 @@ export default function UserForm() {
         <Form
             layout={'vertical'}
             onFinishFailed={(fields) => {
-                const bankAccountErrors = fields.errorFields.reduce(
-                    (prev, current) =>
-                        current.name.includes('bankAccount')
-                            ? prev + 1
-                            : prev,
-                    0
-                );
+                let bankAccountErrors = 0;
+                let personalDataErrors = 0;
+
+                fields.errorFields.forEach(({ name }) => {
+                    if (name.includes('bankAccount')) {
+                        bankAccountErrors ++;
+                    }
+
+                    if (
+                        name.includes('location') ||
+                        name.includes('skills') ||
+                        name.includes('phone') ||
+                        name.includes('taxpayerId') ||
+                        name.includes('pricePerWord')
+                    ) {
+                        personalDataErrors++;
+                    }
+                })
 
                 if (bankAccountErrors >= 1) {
-                    window.alert(`Existem ${bankAccountErrors} erros na aba Dados bancários`);
+                    window.alert(`Existem ${bankAccountErrors} erros na aba dados bancários`);
                 }
+                if (personalDataErrors >= 1) {
+                    window.alert(`Existem ${personalDataErrors} erros na aba Dados pessoais`);
+                }
+
             }}
             onFinish={(form: User.Input) => {
                 console.log(form);
