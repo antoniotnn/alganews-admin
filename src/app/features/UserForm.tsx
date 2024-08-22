@@ -49,7 +49,7 @@ export default function UserForm() {
         form.setFieldsValue({
             avatarUrl: avatar || undefined,
         });
-    }, [avatar]);
+    }, [avatar, form]);
 
     return (
         <Form
@@ -93,7 +93,7 @@ export default function UserForm() {
                                 error.data.objects.map((error) => {
                                     return {
                                         name: error.name
-                                            ?.split(/(\.|\[|\])/gi)
+                                            ?.split(/([.[\]])/gi)
                                             .filter(
                                                 (str) =>
                                                     str !== '.' &&
@@ -128,7 +128,7 @@ export default function UserForm() {
                                 setAvatar('');
                             }}
                             beforeUpload={(file) => {
-                                handleAvatarUpload(file);
+                                handleAvatarUpload(file).then(r => r);
                                 return false;
                             }}
                         >
@@ -417,7 +417,7 @@ export default function UserForm() {
                                                             message: '',
                                                         },
                                                         {
-                                                            async validator (field, value) {
+                                                            async validator (_, value) {
                                                                 if (isNaN(Number(value))) {
                                                                     // eslint-disable-next-line no-throw-literal
                                                                     throw 'Apenas números'
