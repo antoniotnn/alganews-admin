@@ -6,7 +6,7 @@ import {Provider} from "react-redux";
 import reportWebVitals from './reportWebVitals';
 import {store} from './core/store';
 import DefaultLayout from "./app/layouts/Default";
-import Routes from "./routes";
+import Routes from "./app/routes";
 
 import './index.less';
 
