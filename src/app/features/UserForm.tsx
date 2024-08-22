@@ -9,21 +9,33 @@ import {
     Select,
     Tabs,
     Upload,
-    Button, notification,
+    Button,
+    notification,
 } from 'antd';
-import React, {useCallback, useEffect, useState} from 'react';
-import {FileService, User, UserService} from 'tnn-sdk';
-import {UserOutlined} from '@ant-design/icons';
+import React, {
+    useCallback,
+    useEffect,
+    useState,
+} from 'react';
+import {
+    FileService,
+    User,
+    UserService,
+} from 'tnn-sdk';
+import { UserOutlined } from '@ant-design/icons';
 import ImageCrop from 'antd-img-crop';
 import CustomError from "tnn-sdk/dist/utils/CustomError";
 
-const {TabPane} = Tabs;
+
+const { TabPane } = Tabs;
 
 export default function UserForm() {
     const [form] = Form.useForm<User.Input>();
 
     const [avatar, setAvatar] = useState('');
-    const [activeTab, setActiveTab] = useState<'personal' | 'bankAccount'>('personal');
+    const [activeTab, setActiveTab] = useState<
+        'personal' | 'bankAccount'
+    >('personal');
 
     const handleAvatarUpload = useCallback(
         async (file: File) => {
@@ -37,7 +49,7 @@ export default function UserForm() {
         form.setFieldsValue({
             avatarUrl: avatar || undefined,
         });
-    }, [avatar, form]);
+    }, [avatar]);
 
     return (
         <Form
@@ -48,24 +60,24 @@ export default function UserForm() {
                 let personalDataErrors = 0;
 
                 fields.errorFields.forEach(({ name }) => {
-                    if (name.includes('bankAccount')) {
-                        bankAccountErrors ++;
-                    }
-
+                    if (name.includes('bankAccount'))
+                        bankAccountErrors++;
                     if (
                         name.includes('location') ||
                         name.includes('skills') ||
                         name.includes('phone') ||
                         name.includes('taxpayerId') ||
                         name.includes('pricePerWord')
-                    ) {
+                    )
                         personalDataErrors++;
-                    }
-                })
+                });
 
-                if (bankAccountErrors > personalDataErrors) setActiveTab('bankAccount');
-
-                if (personalDataErrors > bankAccountErrors) setActiveTab('personal');
+                if (bankAccountErrors > personalDataErrors) {
+                    setActiveTab('bankAccount');
+                }
+                if (personalDataErrors > bankAccountErrors) {
+                    setActiveTab('personal');
+                }
             }}
             onFinish={async (user: User.Input) => {
                 try {
@@ -77,19 +89,28 @@ export default function UserForm() {
                 } catch (error) {
                     if (error instanceof CustomError) {
                         if (error.data?.objects) {
-                            form.setFields(error.data.objects.map(error => {
-                                return {
-                                    name: error.name?.split(/(\.|\[|\])/gi)
-                                        .filter((str) => str !== '.' && str !== '[' && str !== ']' && str !== '')
-                                        .map((str) => isNaN(Number(str)) ? str : Number(str)) as string[],
-                                    errors: [error.userMessage]
-                                }
-                            }));
+                            form.setFields(
+                                error.data.objects.map((error) => {
+                                    return {
+                                        name: error.name
+                                            ?.split(/(\.|\[|\])/gi)
+                                            .filter(
+                                                (str) =>
+                                                    str !== '.' &&
+                                                    str !== '[' &&
+                                                    str !== ']' &&
+                                                    str !== ''
+                                            )
+                                            .map((str) =>
+                                                isNaN(Number(str))
+                                                    ? str
+                                                    : Number(str)
+                                            ) as string[],
+                                        errors: [error.userMessage],
+                                    };
+                                })
+                            );
                         }
-                        notification.error({
-                            message: 'Houve um erro',
-                            description: error.message,
-                        });
                     } else {
                         notification.error({
                             message: 'Houve um erro',
@@ -112,8 +133,8 @@ export default function UserForm() {
                             }}
                         >
                             <Avatar
-                                style={{cursor: 'pointer'}}
-                                icon={<UserOutlined/>}
+                                style={{ cursor: 'pointer' }}
+                                icon={<UserOutlined />}
                                 src={avatar}
                                 size={128}
                             />
@@ -124,42 +145,74 @@ export default function UserForm() {
                     </Form.Item>
                 </Col>
                 <Col lg={8}>
-                    <Form.Item label={'Nome'} name={'name'} rules={[{
-                        required: true,
-                        message: 'O campo é obrigatório'
-                    }]}>
-                        <Input placeholder={'E.g.: João Silva'}/>
+                    <Form.Item
+                        label={'Nome'}
+                        name={'name'}
+                        rules={[
+                            {
+                                required: true,
+                                message: 'O campo é obrigatório',
+                            },
+                            {
+                                max: 255,
+                                message: `O nome não pode ter mais de 255 caracteres`,
+                            },
+                        ]}
+                    >
+                        <Input placeholder={'E.g.: João Silva'} />
                     </Form.Item>
                     <Form.Item
                         label={'Data de nascimento'}
                         name={'birthdate'}
-                        rules={[{
-                            required: true,
-                            message: 'O campo é obrigatório'
-                        }]}
+                        rules={[
+                            {
+                                required: true,
+                                message: 'O campo é obrigatório',
+                            },
+                        ]}
                     >
                         <DatePicker
-                            style={{width: '100%'}}
+                            style={{ width: '100%' }}
                             format={'DD/MM/YYYY'}
                         />
                     </Form.Item>
                 </Col>
                 <Col lg={12}>
-                    <Form.Item label={'Bio'} name={'bio'} rules={[{
-                        required: true,
-                        message: 'O campo é obrigatório'
-                    }]}>
-                        <Input.TextArea rows={5}/>
+                    <Form.Item
+                        label={'Bio'}
+                        name={'bio'}
+                        rules={[
+                            {
+                                required: true,
+                                message: 'O campo é obrigatório',
+                            },
+                            {
+                                max: 255,
+                                message: `A biografia não pode ter mais de 255 caracteres`,
+                            },
+                            {
+                                min: 10,
+                                message: `A biografia não pode ter menos de 10 caracteres`,
+                            },
+                        ]}
+                    >
+                        <Input.TextArea rows={5} />
                     </Form.Item>
                 </Col>
                 <Col xs={24}>
-                    <Divider/>
+                    <Divider />
                 </Col>
                 <Col lg={12}>
-                    <Form.Item label={'Perfil'} name={'role'} rules={[{
-                        required: true,
-                        message: 'O campo é obrigatório'
-                    }]}>
+                    <Form.Item
+                        label={'Perfil'}
+                        name={'role'}
+                        rules={[
+                            {
+                                required: true,
+                                message: 'O campo é obrigatório',
+                            },
+                        ]}
+                    >
                         <Select placeholder={'Selecione um perfil'}>
                             <Select.Option value={'EDITOR'}>
                                 Editor
@@ -174,10 +227,20 @@ export default function UserForm() {
                     </Form.Item>
                 </Col>
                 <Col lg={12}>
-                    <Form.Item label={'Email'} name={'email'} rules={[{
-                        required: true,
-                        message: 'O campo é obrigatório'
-                    }]}>
+                    <Form.Item
+                        label={'Email'}
+                        name={'email'}
+                        rules={[
+                            {
+                                required: true,
+                                message: 'O campo é obrigatório',
+                            },
+                            {
+                                max: 255,
+                                message: `O email não pode ter mais de 255 caracteres`,
+                            },
+                        ]}
+                    >
                         <Input
                             type='email'
                             placeholder={'E.g.: contato@joao.silva'}
@@ -185,14 +248,18 @@ export default function UserForm() {
                     </Form.Item>
                 </Col>
                 <Col lg={24}>
-                    <Divider/>
+                    <Divider />
                 </Col>
 
                 <Col lg={24}>
                     <Tabs
                         defaultActiveKey={'personal'}
                         activeKey={activeTab}
-                        onChange={tab => setActiveTab(tab as 'personal' | 'bankAccount')}
+                        onChange={(tab) =>
+                            setActiveTab(
+                                tab as 'personal' | 'bankAccount'
+                            )
+                        }
                     >
                         <TabPane
                             key={'personal'}
@@ -203,22 +270,34 @@ export default function UserForm() {
                                     <Form.Item
                                         label={'País'}
                                         name={['location', 'country']}
-                                        rules={[{
-                                            required: true,
-                                            message: 'O campo é obrigatório'
-                                        }]}
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'O campo é obrigatório',
+                                            },
+                                            {
+                                                max: 50,
+                                                message: `O país não pode ter mais de 50 caracteres`,
+                                            },
+                                        ]}
                                     >
-                                        <Input placeholder={'E.g.: Brasil'}/>
+                                        <Input placeholder={'E.g.: Brasil'} />
                                     </Form.Item>
                                 </Col>
                                 <Col lg={8}>
                                     <Form.Item
                                         label={'Estado'}
                                         name={['location', 'state']}
-                                        rules={[{
-                                            required: true,
-                                            message: 'O campo é obrigatório'
-                                        }]}
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'O campo é obrigatório',
+                                            },
+                                            {
+                                                max: 50,
+                                                message: `O estado não pode ter mais de 50 caracteres`,
+                                            },
+                                        ]}
                                     >
                                         <Input
                                             placeholder={'E.g.: Espírito Santo'}
@@ -229,22 +308,34 @@ export default function UserForm() {
                                     <Form.Item
                                         label={'Cidade'}
                                         name={['location', 'city']}
-                                        rules={[{
-                                            required: true,
-                                            message: 'O campo é obrigatório'
-                                        }]}
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'O campo é obrigatório',
+                                            },
+                                            {
+                                                max: 255,
+                                                message: `A cidade não pode ter mais de 255 caracteres`,
+                                            },
+                                        ]}
                                     >
-                                        <Input placeholder={'E.g.: Vitória'}/>
+                                        <Input placeholder={'E.g.: Vitória'} />
                                     </Form.Item>
                                 </Col>
                                 <Col lg={8}>
                                     <Form.Item
                                         label={'Telefone'}
                                         name={'phone'}
-                                        rules={[{
-                                            required: true,
-                                            message: 'O campo é obrigatório'
-                                        }]}
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'O campo é obrigatório',
+                                            },
+                                            {
+                                                max: 20,
+                                                message: `O telefone não pode ter mais de 20 caracteres`,
+                                            },
+                                        ]}
                                     >
                                         <Input
                                             placeholder={'(27) 99999-0000'}
@@ -255,24 +346,32 @@ export default function UserForm() {
                                     <Form.Item
                                         label={'CPF'}
                                         name={'taxpayerId'}
-                                        rules={[{
-                                            required: true,
-                                            message: 'O campo é obrigatório'
-                                        }]}
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'O campo é obrigatório',
+                                            },
+                                            {
+                                                max: 14,
+                                                message: `O CPF não pode ter mais de 14 caracteres`,
+                                            },
+                                        ]}
                                     >
-                                        <Input placeholder={'111.222.333-44'}/>
+                                        <Input placeholder={'111.222.333-44'} />
                                     </Form.Item>
                                 </Col>
                                 <Col lg={8}>
                                     <Form.Item
                                         label={'Preço por palavra'}
                                         name={'pricePerWord'}
-                                        rules={[{
-                                            required: true,
-                                            message: 'O campo é obrigatório'
-                                        }]}
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'O campo é obrigatório',
+                                            },
+                                        ]}
                                     >
-                                        <Input placeholder={'0'}/>
+                                        <Input placeholder={'0'} />
                                     </Form.Item>
                                 </Col>
                                 {[1, 2, 3].map((_, index) => {
@@ -282,10 +381,17 @@ export default function UserForm() {
                                                 <Form.Item
                                                     label={'Habilidade'}
                                                     name={['skills', index, 'name']}
-                                                    rules={[{
-                                                        required: true,
-                                                        message: 'O campo é obrigatório'
-                                                    }]}
+                                                    rules={[
+                                                        {
+                                                            required: true,
+                                                            message:
+                                                                'O campo é obrigatório',
+                                                        },
+                                                        {
+                                                            max: 50,
+                                                            message: `A habilidade não pode ter mais de 50 caracteres`,
+                                                        },
+                                                    ]}
                                                 >
                                                     <Input
                                                         placeholder={'E.g.: JavaScript'}
@@ -300,12 +406,14 @@ export default function UserForm() {
                                                         index,
                                                         'percentage',
                                                     ]}
-                                                    rules={[{
-                                                        required: true,
-                                                        message: ''
-                                                    }]}
+                                                    rules={[
+                                                        {
+                                                            required: true,
+                                                            message: '',
+                                                        },
+                                                    ]}
                                                 >
-                                                    <Input/>
+                                                    <Input />
                                                 </Form.Item>
                                             </Col>
                                         </React.Fragment>
@@ -323,58 +431,88 @@ export default function UserForm() {
                                     <Form.Item
                                         label={'Instituição'}
                                         name={['bankAccount', 'bankCode']}
-                                        rules={[{
-                                            required: true,
-                                            message: 'O campo é obrigatório'
-                                        }]}
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'O campo é obrigatório',
+                                            },
+                                            {
+                                                max: 3,
+                                                message: `A instituição precisa ter 3 caracteres`,
+                                            },
+                                            {
+                                                min: 3,
+                                                message: `A instituição precisa ter 3 caracteres`,
+                                            },
+                                        ]}
                                     >
-                                        <Input placeholder={'260'}/>
+                                        <Input placeholder={'260'} />
                                     </Form.Item>
                                 </Col>
                                 <Col lg={8}>
                                     <Form.Item
                                         label={'Agência'}
                                         name={['bankAccount', 'agency']}
-                                        rules={[{
-                                            required: true,
-                                            message: 'O campo é obrigatório'
-                                        }]}
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'O campo é obrigatório',
+                                            },
+                                            {
+                                                max: 10,
+                                                message: `A agência precisa ter no máximo 10 caracteres`,
+                                            },
+                                            {
+                                                min: 1,
+                                                message: `A agência precisa ter no mínimo 1 caractere`,
+                                            },
+                                        ]}
                                     >
-                                        <Input placeholder={'0001'}/>
+                                        <Input placeholder={'0001'} />
                                     </Form.Item>
                                 </Col>
                                 <Col lg={8}>
                                     <Form.Item
                                         label={'Conta sem dígito'}
                                         name={['bankAccount', 'number']}
-                                        rules={[{
-                                            required: true,
-                                            message: 'O campo é obrigatório'
-                                        }]}
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'O campo é obrigatório',
+                                            },
+                                        ]}
                                     >
-                                        <Input placeholder={'12345'}/>
+                                        <Input placeholder={'12345'} />
                                     </Form.Item>
                                 </Col>
                                 <Col lg={8}>
                                     <Form.Item
                                         label={'Dígito'}
                                         name={['bankAccount', 'digit']}
-                                        rules={[{
-                                            required: true,
-                                            message: 'O campo é obrigatório'
-                                        }]}
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'O campo é obrigatório',
+                                            },
+                                            {
+                                                max: 1,
+                                                message: `O dígito precisa ser único`,
+                                            },
+                                        ]}
                                     >
-                                        <Input placeholder={'1'}/>
+                                        <Input placeholder={'1'} />
                                     </Form.Item>
                                 </Col>
                                 <Col lg={8}>
                                     <Form.Item
                                         label={'Tipo de conta'}
                                         name={['bankAccount', 'type']}
-                                        rules={[{
-                                            required: true,
-                                            message: 'O campo é obrigatório'
-                                        }]}
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'O campo é obrigatório',
+                                            },
+                                        ]}
                                     >
                                         <Select
                                             placeholder={
