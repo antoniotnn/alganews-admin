@@ -25,6 +25,7 @@ import {
 import { UserOutlined } from '@ant-design/icons';
 import ImageCrop from 'antd-img-crop';
 import CustomError from "tnn-sdk/dist/utils/CustomError";
+import {MaskedInput} from "antd-mask-input";
 
 
 const { TabPane } = Tabs;
@@ -54,6 +55,7 @@ export default function UserForm() {
     return (
         <Form
             form={form}
+            autoComplete={'off'}
             layout={'vertical'}
             onFinishFailed={(fields) => {
                 let bankAccountErrors = 0;
@@ -342,7 +344,8 @@ export default function UserForm() {
                                             },
                                         ]}
                                     >
-                                        <Input
+                                        <MaskedInput
+                                            mask='(11) 11111-1111'
                                             placeholder={'(27) 99999-0000'}
                                         />
                                     </Form.Item>
@@ -362,7 +365,10 @@ export default function UserForm() {
                                             },
                                         ]}
                                     >
-                                        <Input placeholder={'111.222.333-44'} />
+                                        <MaskedInput
+                                            mask='111.111.111-11'
+                                            placeholder={'111.222.333-44'}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col lg={8}>
