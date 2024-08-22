@@ -416,6 +416,22 @@ export default function UserForm() {
                                                             required: true,
                                                             message: '',
                                                         },
+                                                        {
+                                                            async validator (field, value) {
+                                                                if (isNaN(Number(value))) {
+                                                                    // eslint-disable-next-line no-throw-literal
+                                                                    throw 'Apenas números'
+                                                                }
+                                                                if (Number(value) > 100) {
+                                                                    // eslint-disable-next-line no-throw-literal
+                                                                    throw 'Máximo é 100'
+                                                                }
+                                                                if (Number(value) < 0) {
+                                                                    // eslint-disable-next-line no-throw-literal
+                                                                    throw 'Mínimo é 0'
+                                                                }
+                                                            }
+                                                        }
                                                     ]}
                                                 >
                                                     <Input />
