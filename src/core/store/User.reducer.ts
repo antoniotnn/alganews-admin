@@ -1,6 +1,5 @@
 import {User, UserService} from "tnn-sdk";
 import {createAsyncThunk, createReducer, isFulfilled, isPending, isRejected,} from "@reduxjs/toolkit";
-import {notification} from "antd";
 
 interface UserState {
     list: User.Summary[];
@@ -53,9 +52,6 @@ export default createReducer(initialState, (builder) => {
     builder
         .addMatcher(error, (state, action) => {
             state.fetching = false
-            notification.error({
-                message: action.error.message
-            });
         });
     builder
         .addMatcher(loading, (state) => {
