@@ -9,20 +9,20 @@ import {
     Input,
     Descriptions,
 } from 'antd';
-import { User } from 'tnn-sdk';
+import {User} from 'tnn-sdk';
 import format from 'date-fns/format';
 import parseISO from 'date-fns/parseISO';
-import { useEffect } from 'react';
+import {useEffect} from 'react';
 import useUsers from '../../core/hooks/useUsers';
 import {
     EyeOutlined,
     EditOutlined,
     SearchOutlined,
 } from '@ant-design/icons';
-import { ColumnProps } from 'antd/lib/table';
+import {ColumnProps} from 'antd/lib/table';
 
 export default function UserList() {
-    const { users, fetchUsers, toggleUserStatus, fetching } =
+    const {users, fetchUsers, toggleUserStatus, fetching} =
         useUsers();
 
     useEffect(() => {
@@ -41,7 +41,7 @@ export default function UserList() {
                          }) => (
             <Card>
                 <Input
-                    style={{ marginBottom: 8, display: 'block' }}
+                    style={{marginBottom: 8, display: 'block'}}
                     value={selectedKeys[0]}
                     placeholder={`Buscar ${displayName || dataIndex}`}
                     onChange={(e) => {
@@ -55,16 +55,16 @@ export default function UserList() {
                     <Button
                         type={'primary'}
                         size={'small'}
-                        style={{ width: 90 }}
+                        style={{width: 90}}
                         onClick={() => confirm()}
-                        icon={<SearchOutlined />}
+                        icon={<SearchOutlined/>}
                     >
                         Buscar
                     </Button>
                     <Button
                         onClick={clearFilters}
                         size={'small'}
-                        style={{ width: 90 }}
+                        style={{width: 90}}
                     >
                         Limpar
                     </Button>
@@ -73,7 +73,7 @@ export default function UserList() {
         ),
         filterIcon: (filtered: boolean) => (
             <SearchOutlined
-                style={{ color: filtered ? '#0099ff' : undefined }}
+                style={{color: filtered ? '#0099ff' : undefined}}
             />
         ),
         // @ts-ignore
@@ -130,11 +130,11 @@ export default function UserList() {
                                     <Descriptions.Item label={'Ações'}>
                                         <Button
                                             size='small'
-                                            icon={<EyeOutlined />}
+                                            icon={<EyeOutlined/>}
                                         />
                                         <Button
                                             size='small'
-                                            icon={<EditOutlined />}
+                                            icon={<EditOutlined/>}
                                         />
                                     </Descriptions.Item>
                                 </Descriptions>
@@ -178,6 +178,9 @@ export default function UserList() {
                         align: 'center',
                         responsive: ['sm'],
                         width: 100,
+                        sorter(a, b) {
+                          return a.role.localeCompare(b.role);
+                        },
                         render(role) {
                             return (
                                 <Tag
@@ -199,6 +202,11 @@ export default function UserList() {
                         title: 'Criação',
                         align: 'center',
                         responsive: ['lg'],
+                        sorter(a, b) {
+                            return new Date(a.createdAt) > new Date(b.createdAt)
+                                ? 1 : -1;
+
+                        },
                         width: 120,
                         render(createdAt: string) {
                             return format(
@@ -235,11 +243,11 @@ export default function UserList() {
                                 <>
                                     <Button
                                         size='small'
-                                        icon={<EyeOutlined />}
+                                        icon={<EyeOutlined/>}
                                     />
                                     <Button
                                         size='small'
-                                        icon={<EditOutlined />}
+                                        icon={<EditOutlined/>}
                                     />
                                 </>
                             );
