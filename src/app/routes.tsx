@@ -10,6 +10,7 @@ import CashFlowExpensesView from './views/CashFlowExpenses.view';
 import { useEffect } from 'react';
 import { message, notification } from 'antd';
 import CustomError from "tnn-sdk/dist/utils/CustomError";
+import UserEditView from "./views/UserEdit.view";
 
 export default function Routes() {
     useEffect(() => {
@@ -47,6 +48,11 @@ export default function Routes() {
                 path={'/usuarios/cadastro'}
                 exact
                 component={UserCreateView}
+            />
+            <Route
+                path={'/usuarios/edicao/:id'}
+                exact
+                component={UserEditView}
             />
             <Route
                 path={'/usuarios'}

@@ -30,7 +30,13 @@ import {MaskedInput} from "antd-mask-input";
 
 const { TabPane } = Tabs;
 
-export default function UserForm() {
+type UserFormType = User.Detailed;
+
+interface UserFormProps {
+    user?: UserFormType;
+}
+
+export default function UserForm(props: UserFormProps) {
     const [form] = Form.useForm<User.Input>();
 
     const [avatar, setAvatar] = useState('');
@@ -131,6 +137,7 @@ export default function UserForm() {
                     }
                 }
             }}
+            initialValues={props.user}
         >
             <Row gutter={24} align={'middle'}>
                 <Col lg={4}>
@@ -174,21 +181,21 @@ export default function UserForm() {
                     >
                         <Input placeholder={'E.g.: João Silva'} />
                     </Form.Item>
-                    <Form.Item
-                        label={'Data de nascimento'}
-                        name={'birthdate'}
-                        rules={[
-                            {
-                                required: true,
-                                message: 'O campo é obrigatório',
-                            },
-                        ]}
-                    >
-                        <DatePicker
-                            style={{ width: '100%' }}
-                            format={'DD/MM/YYYY'}
-                        />
-                    </Form.Item>
+                    {/*<Form.Item*/}
+                    {/*    label={'Data de nascimento'}*/}
+                    {/*    name={'birthdate'}*/}
+                    {/*    rules={[*/}
+                    {/*        {*/}
+                    {/*            required: true,*/}
+                    {/*            message: 'O campo é obrigatório',*/}
+                    {/*        },*/}
+                    {/*    ]}*/}
+                    {/*>*/}
+                    {/*    <DatePicker*/}
+                    {/*        style={{ width: '100%' }}*/}
+                    {/*        format={'DD/MM/YYYY'}*/}
+                    {/*    />*/}
+                    {/*</Form.Item>*/}
                 </Col>
                 <Col lg={12}>
                     <Form.Item
