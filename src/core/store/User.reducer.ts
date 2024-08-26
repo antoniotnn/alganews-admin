@@ -1,5 +1,13 @@
 import {User, UserService} from "tnn-sdk";
-import {createAsyncThunk, createReducer, isFulfilled, isPending, isRejected} from "@reduxjs/toolkit";
+import {
+    createAsyncThunk,
+    createReducer,
+    isFulfilled,
+    isPending,
+    isRejected, PayloadAction,
+} from "@reduxjs/toolkit";
+import {notification} from "antd";
+import CustomError from "tnn-sdk/dist/utils/CustomError";
 
 interface UserState {
     list: User.Summary[];
@@ -13,7 +21,14 @@ const initialState: UserState = {
 
 export const getAllUsers = createAsyncThunk(
     'users/getAllUsers',
-    async () => UserService.getAllUsers()
+    async (_, { rejectWithValue }) => {
+        try {
+            return await UserService.getAllUsers();
+        } catch (error) {
+            // @ts-ignore
+            return rejectWithValue({ ...error});
+        }
+    }
 );
 
 export const toggleUserStatus = createAsyncThunk(
@@ -50,8 +65,12 @@ export default createReducer(initialState, (builder) => {
             state.fetching = false
         });
     builder
-        .addMatcher(error, (state) => {
+        .addMatcher(error, (state, action: PayloadAction<CustomError>) => {
             state.fetching = false
+            notification.error({
+                message: action.payload.data?.userMessage,
+                description: action.payload.data?.detail,
+            });
         });
     builder
         .addMatcher(loading, (state) => {

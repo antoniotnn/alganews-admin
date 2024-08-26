@@ -34,6 +34,11 @@ export default function Routes() {
                 });
             }
         };
+
+        return () => {
+            window.onunhandledrejection = null;
+        }
+
     }, []);
     return (
         <Switch>
