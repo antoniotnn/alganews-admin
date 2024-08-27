@@ -26,11 +26,16 @@ import { UserOutlined } from '@ant-design/icons';
 import ImageCrop from 'antd-img-crop';
 import CustomError from "tnn-sdk/dist/utils/CustomError";
 import {MaskedInput} from "antd-mask-input";
+import {Moment} from "moment";
 
 
 const { TabPane } = Tabs;
 
-type UserFormType = User.Detailed;
+type UserFormType = {
+    createdAt: Moment;
+    updatedAt: Moment;
+    birthdate: Moment;
+} & Omit<User.Detailed, 'createdAt' | 'updatedAt' | 'birthdate'>;
 
 interface UserFormProps {
     user?: UserFormType;
@@ -181,21 +186,21 @@ export default function UserForm(props: UserFormProps) {
                     >
                         <Input placeholder={'E.g.: João Silva'} />
                     </Form.Item>
-                    {/*<Form.Item*/}
-                    {/*    label={'Data de nascimento'}*/}
-                    {/*    name={'birthdate'}*/}
-                    {/*    rules={[*/}
-                    {/*        {*/}
-                    {/*            required: true,*/}
-                    {/*            message: 'O campo é obrigatório',*/}
-                    {/*        },*/}
-                    {/*    ]}*/}
-                    {/*>*/}
-                    {/*    <DatePicker*/}
-                    {/*        style={{ width: '100%' }}*/}
-                    {/*        format={'DD/MM/YYYY'}*/}
-                    {/*    />*/}
-                    {/*</Form.Item>*/}
+                    <Form.Item
+                        label={'Data de nascimento'}
+                        name={'birthdate'}
+                        rules={[
+                            {
+                                required: true,
+                                message: 'O campo é obrigatório',
+                            },
+                        ]}
+                    >
+                        <DatePicker
+                            style={{ width: '100%' }}
+                            format={'DD/MM/YYYY'}
+                        />
+                    </Form.Item>
                 </Col>
                 <Col lg={12}>
                     <Form.Item
