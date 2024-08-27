@@ -22,14 +22,14 @@ import {
     User,
     UserService,
 } from 'tnn-sdk';
-import { UserOutlined } from '@ant-design/icons';
+import {UserOutlined} from '@ant-design/icons';
 import ImageCrop from 'antd-img-crop';
 import CustomError from "tnn-sdk/dist/utils/CustomError";
 import {MaskedInput} from "antd-mask-input";
 import {Moment} from "moment";
 
 
-const { TabPane } = Tabs;
+const {TabPane} = Tabs;
 
 type UserFormType = {
     createdAt: Moment;
@@ -44,7 +44,7 @@ interface UserFormProps {
 export default function UserForm(props: UserFormProps) {
     const [form] = Form.useForm<User.Input>();
 
-    const [avatar, setAvatar] = useState('');
+    const [avatar, setAvatar] = useState(props.user?.avatarUrls.default || '');
     const [activeTab, setActiveTab] = useState<
         'personal' | 'bankAccount'
     >('personal');
@@ -72,7 +72,7 @@ export default function UserForm(props: UserFormProps) {
                 let bankAccountErrors = 0;
                 let personalDataErrors = 0;
 
-                fields.errorFields.forEach(({ name }) => {
+                fields.errorFields.forEach(({name}) => {
                     if (name.includes('bankAccount'))
                         bankAccountErrors++;
                     if (
@@ -156,17 +156,28 @@ export default function UserForm(props: UserFormProps) {
                                 handleAvatarUpload(file).then(r => r);
                                 return false;
                             }}
+                            fileList={[
+                                ...(
+                                    avatar
+                                        ? [
+                                            {
+                                                name: 'Avatar',
+                                                uid: '',
+                                            }
+                                        ] : []
+                                ),
+                            ]}
                         >
                             <Avatar
-                                style={{ cursor: 'pointer' }}
-                                icon={<UserOutlined />}
+                                style={{cursor: 'pointer'}}
+                                icon={<UserOutlined/>}
                                 src={avatar}
                                 size={128}
                             />
                         </Upload>
                     </ImageCrop>
                     <Form.Item name={'avatarUrl'} hidden>
-                        <Input hidden />
+                        <Input hidden/>
                     </Form.Item>
                 </Col>
                 <Col lg={8}>
@@ -184,7 +195,7 @@ export default function UserForm(props: UserFormProps) {
                             },
                         ]}
                     >
-                        <Input placeholder={'E.g.: João Silva'} />
+                        <Input placeholder={'E.g.: João Silva'}/>
                     </Form.Item>
                     <Form.Item
                         label={'Data de nascimento'}
@@ -197,7 +208,7 @@ export default function UserForm(props: UserFormProps) {
                         ]}
                     >
                         <DatePicker
-                            style={{ width: '100%' }}
+                            style={{width: '100%'}}
                             format={'DD/MM/YYYY'}
                         />
                     </Form.Item>
@@ -221,11 +232,11 @@ export default function UserForm(props: UserFormProps) {
                             },
                         ]}
                     >
-                        <Input.TextArea rows={5} />
+                        <Input.TextArea rows={5}/>
                     </Form.Item>
                 </Col>
                 <Col xs={24}>
-                    <Divider />
+                    <Divider/>
                 </Col>
                 <Col lg={12}>
                     <Form.Item
@@ -278,7 +289,7 @@ export default function UserForm(props: UserFormProps) {
                     </Form.Item>
                 </Col>
                 <Col lg={24}>
-                    <Divider />
+                    <Divider/>
                 </Col>
 
                 <Col lg={24}>
@@ -311,7 +322,7 @@ export default function UserForm(props: UserFormProps) {
                                             },
                                         ]}
                                     >
-                                        <Input placeholder={'E.g.: Brasil'} />
+                                        <Input placeholder={'E.g.: Brasil'}/>
                                     </Form.Item>
                                 </Col>
                                 <Col lg={8}>
@@ -349,7 +360,7 @@ export default function UserForm(props: UserFormProps) {
                                             },
                                         ]}
                                     >
-                                        <Input placeholder={'E.g.: Vitória'} />
+                                        <Input placeholder={'E.g.: Vitória'}/>
                                     </Form.Item>
                                 </Col>
                                 <Col lg={8}>
@@ -405,7 +416,7 @@ export default function UserForm(props: UserFormProps) {
                                             },
                                         ]}
                                     >
-                                        <Input placeholder={'0'} />
+                                        <Input placeholder={'0'}/>
                                     </Form.Item>
                                 </Col>
                                 {[1, 2, 3].map((_, index) => {
@@ -446,7 +457,7 @@ export default function UserForm(props: UserFormProps) {
                                                             message: '',
                                                         },
                                                         {
-                                                            async validator (_, value) {
+                                                            async validator(_, value) {
                                                                 if (isNaN(Number(value))) {
                                                                     throw new Error('Apenas números');
                                                                 }
@@ -460,7 +471,7 @@ export default function UserForm(props: UserFormProps) {
                                                         }
                                                     ]}
                                                 >
-                                                    <Input />
+                                                    <Input/>
                                                 </Form.Item>
                                             </Col>
                                         </React.Fragment>
@@ -493,7 +504,7 @@ export default function UserForm(props: UserFormProps) {
                                             },
                                         ]}
                                     >
-                                        <Input placeholder={'260'} />
+                                        <Input placeholder={'260'}/>
                                     </Form.Item>
                                 </Col>
                                 <Col lg={8}>
@@ -515,7 +526,7 @@ export default function UserForm(props: UserFormProps) {
                                             },
                                         ]}
                                     >
-                                        <Input placeholder={'0001'} />
+                                        <Input placeholder={'0001'}/>
                                     </Form.Item>
                                 </Col>
                                 <Col lg={8}>
@@ -529,7 +540,7 @@ export default function UserForm(props: UserFormProps) {
                                             },
                                         ]}
                                     >
-                                        <Input placeholder={'12345'} />
+                                        <Input placeholder={'12345'}/>
                                     </Form.Item>
                                 </Col>
                                 <Col lg={8}>
@@ -547,7 +558,7 @@ export default function UserForm(props: UserFormProps) {
                                             },
                                         ]}
                                     >
-                                        <Input placeholder={'1'} />
+                                        <Input placeholder={'1'}/>
                                     </Form.Item>
                                 </Col>
                                 <Col lg={8}>
