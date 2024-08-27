@@ -1,8 +1,8 @@
 import UserForm from "../features/UserForm";
 import useUser from "../../core/hooks/useUser";
 import {useCallback, useEffect} from "react";
-import {Skeleton} from "antd";
-import {User} from "tnn-sdk";
+import { notification, Skeleton} from "antd";
+import {User, UserService} from "tnn-sdk";
 import moment from "moment";
 
 export default function UserEditView() {
@@ -21,11 +21,22 @@ export default function UserEditView() {
         };
     }, []);
 
+    function handleUserUpdate(user: User.Input) {
+        UserService.updateExistingUser(1, user).then(() => {
+            notification.success({
+                message: 'Usuário atualizado com sucesso'
+            })
+        })
+    }
+
     if (!user) return <Skeleton />;
 
     return (
         <>
-            <UserForm user={transformUserData(user)}/>
+            <UserForm
+                onUpdate={handleUserUpdate}
+                user={transformUserData(user)}
+            />
         </>
     );
 }
