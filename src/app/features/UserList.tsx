@@ -7,7 +7,7 @@ import {
     Avatar,
     Card,
     Input,
-    Descriptions,
+    Descriptions, Tooltip,
 } from 'antd';
 import {User} from 'tnn-sdk';
 import format from 'date-fns/format';
@@ -20,6 +20,7 @@ import {
     SearchOutlined,
 } from '@ant-design/icons';
 import {ColumnProps} from 'antd/lib/table';
+import {Link} from "react-router-dom";
 
 export default function UserList() {
     const {users, fetchUsers, toggleUserStatus, fetching} =
@@ -238,17 +239,23 @@ export default function UserList() {
                         align: 'center',
                         width: 100,
                         responsive: ['sm'],
-                        render() {
+                        render(id: number) {
                             return (
                                 <>
-                                    <Button
-                                        size='small'
-                                        icon={<EyeOutlined/>}
-                                    />
-                                    <Button
-                                        size='small'
-                                        icon={<EditOutlined/>}
-                                    />
+                                    <Tooltip title={'Visualizar usuário'} placement={'left'}>
+                                        <Button
+                                            size='small'
+                                            icon={<EyeOutlined/>}
+                                        />
+                                    </Tooltip>
+                                    <Tooltip title={'Editar usuário'} placement={'right'}>
+                                        <Link to={`/usuarios/edicao/${id}`}>
+                                            <Button
+                                                size='small'
+                                                icon={<EditOutlined/>}
+                                            />
+                                        </Link>
+                                    </Tooltip>
                                 </>
                             );
                         },
