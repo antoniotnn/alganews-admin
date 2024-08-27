@@ -4,13 +4,17 @@ import {useCallback, useEffect} from "react";
 import { notification, Skeleton} from "antd";
 import {User, UserService} from "tnn-sdk";
 import moment from "moment";
+import {Redirect, useParams} from "react-router-dom";
 
 export default function UserEditView() {
+    const params = useParams<{ id: string }>();
     const { user, fetchUser } = useUser();
 
     useEffect(() => {
-        fetchUser(1);
-    }, [fetchUser]);
+        if (!isNaN(Number(params.id))) {
+            fetchUser(Number(params.id));
+        }
+    }, [fetchUser, params.id]);
 
     const transformUserData = useCallback((user: User.Detailed) => {
         return {
@@ -21,12 +25,19 @@ export default function UserEditView() {
         };
     }, []);
 
+    if (isNaN(Number(params.id))) {
+        return <Redirect to={'/usuarios'}/>
+    }
+
     function handleUserUpdate(user: User.Input) {
-        UserService.updateExistingUser(1, user).then(() => {
+        UserService.updateExistingUser(
+            Number(params.id),
+            user
+        ).then(() => {
             notification.success({
                 message: 'Usuário atualizado com sucesso'
             })
-        })
+        });
     }
 
     if (!user) return <Skeleton />;
