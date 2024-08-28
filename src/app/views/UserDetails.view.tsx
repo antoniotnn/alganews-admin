@@ -1,7 +1,7 @@
 import useUser from "../../core/hooks/useUser";
 import {useEffect} from "react";
 import {Avatar, Button, Card, Col, Row, Skeleton, Space, Typography, Progress, Descriptions, Divider} from "antd";
-import {Redirect, useParams} from "react-router-dom";
+import {Link, Redirect, useParams} from "react-router-dom";
 import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 
 export default function UserDetailsView() {
@@ -56,7 +56,9 @@ export default function UserDetailsView() {
                         {user.bio}
                     </Typography.Paragraph>
                     <Space>
-                        <Button type={'primary'}>Editar perfil</Button>
+                        <Link to={`/usuarios/edicao/${user.id}`}>
+                            <Button type={'primary'}>Editar perfil</Button>
+                        </Link>
                         <Button type={'primary'}>Remover</Button>
                     </Space>
                 </Space>
