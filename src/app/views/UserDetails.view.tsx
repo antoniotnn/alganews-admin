@@ -1,6 +1,6 @@
 import useUser from "../../core/hooks/useUser";
 import {useEffect} from "react";
-import {Avatar, Button, Card, Col, Row, Skeleton, Space, Typography, Progress} from "antd";
+import {Avatar, Button, Card, Col, Row, Skeleton, Space, Typography, Progress, Descriptions} from "antd";
 import {Redirect, useParams} from "react-router-dom";
 
 export default function UserDetailsView() {
@@ -59,6 +59,22 @@ export default function UserDetailsView() {
                     ))
                 }
             </Space>
+        </Col>
+        <Col xs={24} lg={12}>
+           <Descriptions column={1} bordered size={'small'}>
+                <Descriptions.Item label={'País'}>
+                    {user.location.country}
+                </Descriptions.Item>
+                <Descriptions.Item label={'Estado'}>
+                    {user.location.state}
+                </Descriptions.Item>
+                <Descriptions.Item label={'Cidade'}>
+                    {user.location.city}
+                </Descriptions.Item>
+                <Descriptions.Item label={'Telefone'}>
+                    {user.phone}
+                </Descriptions.Item>
+           </Descriptions>
         </Col>
     </Row>
 }
