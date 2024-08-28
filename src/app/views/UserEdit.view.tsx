@@ -5,7 +5,6 @@ import {Card, notification, Skeleton} from "antd";
 import {User, UserService} from "tnn-sdk";
 import moment from "moment";
 import {Redirect, useHistory, useParams} from "react-router-dom";
-import {hi} from "date-fns/locale";
 
 export default function UserEditView() {
     const params = useParams<{ id: string }>();
