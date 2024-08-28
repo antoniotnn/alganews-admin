@@ -1,11 +1,13 @@
 import useUser from "../../core/hooks/useUser";
 import {useEffect} from "react";
-import {Avatar, Button, Card, Col, Row, Skeleton, Space, Typography, Progress, Descriptions} from "antd";
+import {Avatar, Button, Card, Col, Row, Skeleton, Space, Typography, Progress, Descriptions, Divider} from "antd";
 import {Redirect, useParams} from "react-router-dom";
+import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 
 export default function UserDetailsView() {
     const params = useParams<{ id: string }>();
-    const { user, fetchUser, notFound } = useUser();
+    const { lg } = useBreakpoint();
+    const {user, fetchUser, notFound} = useUser();
 
     useEffect(() => {
         if (!isNaN(Number(params.id))) {
@@ -22,59 +24,77 @@ export default function UserDetailsView() {
     }
 
 
-    if (!user) return <Skeleton />;
+    if (!user) return <Skeleton/>;
 
-    return <Row>
-        <Col xs={24} lg={4}>
-            <Avatar
-                size={120}
-                src={user.avatarUrls.small}
-            />
-        </Col>
-        <Col xs={24} lg={20}>
-            <Typography.Title level={2}>
-                {user.name}
-            </Typography.Title>
-            <Typography.Paragraph ellipsis>
-                {user.bio}
-            </Typography.Paragraph>
-            <Space>
-                <Button type={'primary'}>Editar perfil</Button>
-                <Button type={'primary'}>Remover</Button>
-            </Space>
-        </Col>
-        <Col xs={24} lg={12}>
-            <Space direction="vertical" style={{ width: '100%' }}>
-                {
-                    user.skills?.map(skill => (
-                        <div key={skill.name}>
-                            <Typography.Text>
-                                { skill.name }
-                            </Typography.Text>
-                            <Progress
-                                percent={skill.percentage}
-                                success={{ percent: 0 }}
-                            />
-                        </div>
-                    ))
-                }
-            </Space>
-        </Col>
-        <Col xs={24} lg={12}>
-           <Descriptions column={1} bordered size={'small'}>
-                <Descriptions.Item label={'País'}>
-                    {user.location.country}
-                </Descriptions.Item>
-                <Descriptions.Item label={'Estado'}>
-                    {user.location.state}
-                </Descriptions.Item>
-                <Descriptions.Item label={'Cidade'}>
-                    {user.location.city}
-                </Descriptions.Item>
-                <Descriptions.Item label={'Telefone'}>
-                    {user.phone}
-                </Descriptions.Item>
-           </Descriptions>
-        </Col>
-    </Row>
+    return (
+        <Row gutter={24}>
+            <Col xs={24} lg={4}>
+                <Row justify={'center'}>
+                    <Avatar
+                        size={120}
+                        src={user.avatarUrls.small}
+                    />
+                </Row>
+            </Col>
+            <Col xs={24} lg={20}>
+                <Space
+                    style={{width: '100%'}}
+                    direction={'vertical'}
+                    align={lg ? 'start' : 'center'}
+                >
+                    <Typography.Title level={2}>
+                        {user.name}
+                    </Typography.Title>
+                    <Typography.Paragraph
+                        style={{
+                            textAlign: lg ? 'left' : 'center',
+                        }}
+                        ellipsis={{
+                            rows: 2,
+                        }}
+                    >
+                        {user.bio}
+                    </Typography.Paragraph>
+                    <Space>
+                        <Button type={'primary'}>Editar perfil</Button>
+                        <Button type={'primary'}>Remover</Button>
+                    </Space>
+                </Space>
+            </Col>
+            <Divider />
+            <Col xs={24} lg={12}>
+                <Space direction="vertical" style={{width: '100%'}}>
+                    {
+                        user.skills?.map(skill => (
+                            <div key={skill.name}>
+                                <Typography.Text>
+                                    {skill.name}
+                                </Typography.Text>
+                                <Progress
+                                    percent={skill.percentage}
+                                    success={{percent: 0}}
+                                />
+                            </div>
+                        ))
+                    }
+                </Space>
+            </Col>
+            <Col xs={24} lg={12}>
+                <Descriptions column={1} bordered size={'small'}>
+                    <Descriptions.Item label={'País'}>
+                        {user.location.country}
+                    </Descriptions.Item>
+                    <Descriptions.Item label={'Estado'}>
+                        {user.location.state}
+                    </Descriptions.Item>
+                    <Descriptions.Item label={'Cidade'}>
+                        {user.location.city}
+                    </Descriptions.Item>
+                    <Descriptions.Item label={'Telefone'}>
+                        {user.phone}
+                    </Descriptions.Item>
+                </Descriptions>
+            </Col>
+        </Row>
+    );
 }
