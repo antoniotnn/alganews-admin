@@ -4,10 +4,12 @@ import {useCallback, useEffect} from "react";
 import {Card, notification, Skeleton} from "antd";
 import {User, UserService} from "tnn-sdk";
 import moment from "moment";
-import {Redirect, useParams} from "react-router-dom";
+import {Redirect, useHistory, useParams} from "react-router-dom";
+import {hi} from "date-fns/locale";
 
 export default function UserEditView() {
     const params = useParams<{ id: string }>();
+    const history = useHistory();
     const { user, fetchUser, notFound } = useUser();
 
     useEffect(() => {
@@ -33,11 +35,12 @@ export default function UserEditView() {
         return <Card>usuário não encontrado</Card>;
     }
 
-    function handleUserUpdate(user: User.Input) {
-        UserService.updateExistingUser(
+    async function handleUserUpdate(user: User.Input) {
+        await UserService.updateExistingUser(
             Number(params.id),
             user
         ).then(() => {
+            history.push('/usuarios');
             notification.success({
                 message: 'Usuário atualizado com sucesso'
             })

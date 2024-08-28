@@ -27,6 +27,7 @@ import ImageCrop from 'antd-img-crop';
 import MaskedInput from 'antd-mask-input';
 import { Moment } from 'moment';
 import CustomError from "tnn-sdk/dist/utils/CustomError";
+import {useHistory} from "react-router-dom";
 const { TabPane } = Tabs;
 
 type UserFormType = {
@@ -40,11 +41,14 @@ type UserFormType = {
 
 interface UserFormProps {
     user?: UserFormType;
-    onUpdate?: (user: User.Input) => any;
+    onUpdate?: (user: User.Input) => Promise<any>;
 }
 
 export default function UserForm(props: UserFormProps) {
+    const history = useHistory();
     const [form] = Form.useForm<User.Input>();
+
+    const [loading, setLoading] = useState(false);
 
     const [avatar, setAvatar] = useState(
         props.user?.avatarUrls.default || ''
@@ -97,17 +101,22 @@ export default function UserForm(props: UserFormProps) {
                 }
             }}
             onFinish={async (user: User.Input) => {
+                setLoading(true);
                 const userDTO: User.Input = {
                     ...user,
                     phone: user.phone.replace(/\D/g, ''),
                     taxpayerId: user.taxpayerId.replace(/\D/g, ''),
                 };
 
-                if (props.user)
-                    return props.onUpdate && props.onUpdate(userDTO);
+                if (props.user) {
+                    return props.onUpdate && props.onUpdate(userDTO).finally(() => {
+                        setLoading(false);
+                    });
+                }
 
                 try {
                     await UserService.insertNewUser(userDTO);
+                    history.push('/usuarios');
                     notification.success({
                         message: 'Sucesso',
                         description: 'usuário criado com sucesso',
@@ -151,6 +160,8 @@ export default function UserForm(props: UserFormProps) {
                             message: 'Houve um erro',
                         });
                     }
+                } finally {
+                    setLoading(false);
                 }
             }}
             initialValues={props.user}
@@ -615,7 +626,11 @@ export default function UserForm(props: UserFormProps) {
                 </Col>
                 <Col xs={24}>
                     <Row justify={'end'}>
-                        <Button type={'primary'} htmlType={'submit'}>
+                        <Button
+                            loading={loading}
+                            type={'primary'}
+                            htmlType={'submit'}
+                        >
                             {props.user
                                 ? 'Atualizar usuário'
                                 : 'Cadastrar usuário'}
