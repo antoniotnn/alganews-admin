@@ -19,10 +19,17 @@ export default function useUser() {
         }
     }, []);
 
+    const toggleUserStatus = useCallback((user: User.Summary | User.Detailed) => {
+        return user.active
+            ? UserService.deactivateExistingUser(user.id)
+            : UserService.activateExistingUser(user.id)
+    }, []);
+
     return {
         user,
         fetchUser,
-        notFound
+        notFound,
+        toggleUserStatus
     };
 
 }
