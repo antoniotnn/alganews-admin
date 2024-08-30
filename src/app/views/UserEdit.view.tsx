@@ -5,12 +5,13 @@ import {Card, notification, Skeleton} from "antd";
 import {User, UserService} from "tnn-sdk";
 import moment from "moment";
 import {Redirect, useHistory, useParams} from "react-router-dom";
+import NotFoundError from "../components/NotFoundError";
 
 
 export default function UserEditView() {
     const params = useParams<{ id: string }>();
     const history = useHistory();
-    const { user, fetchUser, notFound } = useUser();
+    const {user, fetchUser, notFound} = useUser();
 
     useEffect(() => {
         if (!isNaN(Number(params.id))) {
@@ -20,10 +21,10 @@ export default function UserEditView() {
 
     const transformUserData = useCallback((user: User.Detailed) => {
         return {
-          ...user,
-          createdAt: moment(user.createdAt),
-          updatedAt: moment(user.updatedAt),
-          birthdate: moment(user.birthdate),
+            ...user,
+            createdAt: moment(user.createdAt),
+            updatedAt: moment(user.updatedAt),
+            birthdate: moment(user.birthdate),
         };
     }, []);
 
@@ -32,7 +33,15 @@ export default function UserEditView() {
     }
 
     if (notFound) {
-        return <Card>usuário não encontrado</Card>;
+        return (
+            <Card>
+                <NotFoundError
+                    title={'Usuário não encontrado'}
+                    actionDestination={'/usuarios'}
+                    actionTitle={'Voltar para lista de usuários'}
+                />
+            </Card>
+        );
     }
 
     async function handleUserUpdate(user: User.Input) {
@@ -47,7 +56,7 @@ export default function UserEditView() {
         });
     }
 
-    if (!user) return <Skeleton />;
+    if (!user) return <Skeleton/>;
 
     return (
         <>
