@@ -28,7 +28,9 @@ import { WarningFilled } from '@ant-design/icons';
 import moment from 'moment';
 import { Post } from 'tnn-sdk';
 import usePosts from '../../core/hooks/usePosts';
+import usePageTitle from "../../core/hooks/usePageTitle";
 export default function UserDetailsView() {
+    usePageTitle('Detalhes do usuário');
     const params = useParams<{ id: string }>();
     const { lg } = useBreakpoint();
 

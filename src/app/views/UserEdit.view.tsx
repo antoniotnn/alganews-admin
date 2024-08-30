@@ -6,9 +6,12 @@ import {User, UserService} from "tnn-sdk";
 import moment from "moment";
 import {Redirect, useHistory, useParams} from "react-router-dom";
 import NotFoundError from "../components/NotFoundError";
+import usePageTitle from "../../core/hooks/usePageTitle";
 
 
 export default function UserEditView() {
+    usePageTitle('Edição do usuário');
+
     const params = useParams<{ id: string }>();
     const history = useHistory();
     const {user, fetchUser, notFound} = useUser();
