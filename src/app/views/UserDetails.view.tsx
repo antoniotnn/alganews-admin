@@ -17,7 +17,7 @@ import {
 import Avatar from 'antd/lib/avatar/avatar';
 import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
 import confirm from 'antd/lib/modal/confirm';
-import { useEffect } from 'react';
+import {useEffect, useState} from 'react';
 import {
     Link,
     Redirect,
@@ -32,6 +32,7 @@ import usePageTitle from "../../core/hooks/usePageTitle";
 export default function UserDetailsView() {
     usePageTitle('Detalhes do usuário');
     const params = useParams<{ id: string }>();
+    const [page, setPage] = useState(0);
     const { lg } = useBreakpoint();
 
     const { user, fetchUser, notFound, toggleUserStatus } =
@@ -51,8 +52,8 @@ export default function UserDetailsView() {
     }, [fetchUser, params.id]);
 
     useEffect(() => {
-        if (user?.role === 'EDITOR') fetchUserPosts(user.id);
-    }, [fetchUserPosts, user]);
+        if (user?.role === 'EDITOR') fetchUserPosts(user.id, page);
+    }, [fetchUserPosts, user, page]);
 
     if (isNaN(Number(params.id)))
         return <Redirect to={'/usuarios'} />;
@@ -170,6 +171,11 @@ export default function UserDetailsView() {
                     dataSource={posts?.content}
                     rowKey={'id'}
                     loading={loadingFetch}
+                    pagination={{
+                        onChange: page => setPage(page - 1),
+                        total: posts?.totalElements,
+                        pageSize: 10
+                    }}
                     columns={[
                         {
                             responsive: ['xs'],
