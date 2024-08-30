@@ -28,6 +28,7 @@ import MaskedInput from 'antd-mask-input';
 import { Moment } from 'moment';
 import CustomError from "tnn-sdk/dist/utils/CustomError";
 import {useHistory} from "react-router-dom";
+import CurrencyInput from "../components/CurrencyInput";
 const { TabPane } = Tabs;
 
 type UserFormType = {
@@ -442,9 +443,20 @@ export default function UserForm(props: UserFormProps) {
                                                 required: true,
                                                 message: 'O campo é obrigatório',
                                             },
+                                            {
+                                                type: 'number',
+                                                min: 0.01,
+                                                message: 'O valor mínimo é 1 centavo',
+                                            }
                                         ]}
                                     >
-                                        <Input placeholder={'0'} />
+                                        <CurrencyInput
+                                            onChange={(e, value) => {
+                                                form.setFieldsValue({
+                                                    pricePerWord: value,
+                                                });
+                                            }}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 {[1, 2, 3].map((_, index) => {

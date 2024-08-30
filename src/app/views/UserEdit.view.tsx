@@ -6,6 +6,7 @@ import {User, UserService} from "tnn-sdk";
 import moment from "moment";
 import {Redirect, useHistory, useParams} from "react-router-dom";
 
+
 export default function UserEditView() {
     const params = useParams<{ id: string }>();
     const history = useHistory();
