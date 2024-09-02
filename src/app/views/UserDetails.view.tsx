@@ -24,19 +24,20 @@ import {
     useParams,
 } from 'react-router-dom';
 import useUser from '../../core/hooks/useUser';
-import { WarningFilled } from '@ant-design/icons';
+import {WarningFilled} from '@ant-design/icons';
 import moment from 'moment';
-import { Post } from 'tnn-sdk';
+import {Post} from 'tnn-sdk';
 import usePosts from '../../core/hooks/usePosts';
 import usePageTitle from "../../core/hooks/usePageTitle";
 import formatPhone from "../../core/utils/formatPhone";
+
 export default function UserDetailsView() {
     usePageTitle('Detalhes do usuário');
     const params = useParams<{ id: string }>();
     const [page, setPage] = useState(0);
-    const { lg } = useBreakpoint();
+    const {lg} = useBreakpoint();
 
-    const { user, fetchUser, notFound, toggleUserStatus } =
+    const {user, fetchUser, notFound, toggleUserStatus} =
         useUser();
 
     const {
@@ -57,22 +58,22 @@ export default function UserDetailsView() {
     }, [fetchUserPosts, user, page]);
 
     if (isNaN(Number(params.id)))
-        return <Redirect to={'/usuarios'} />;
+        return <Redirect to={'/usuarios'}/>;
 
     if (notFound) return <Card>usuário não encontrado</Card>;
 
-    if (!user) return <Skeleton />;
+    if (!user) return <Skeleton/>;
 
     return (
         <Row gutter={24}>
             <Col xs={24} lg={4}>
                 <Row justify={'center'}>
-                    <Avatar size={120} src={user.avatarUrls.small} />
+                    <Avatar size={120} src={user.avatarUrls.small}/>
                 </Row>
             </Col>
             <Col xs={24} lg={20}>
                 <Space
-                    style={{ width: '100%' }}
+                    style={{width: '100%'}}
                     direction={'vertical'}
                     align={lg ? 'start' : 'center'}
                 >
@@ -105,7 +106,7 @@ export default function UserDetailsView() {
                                 confirm({
                                     icon: (
                                         <WarningFilled
-                                            style={{ color: '#09f' }}
+                                            style={{color: '#09f'}}
                                         />
                                     ),
                                     title: `Tem certeza que deseja ${
@@ -131,25 +132,29 @@ export default function UserDetailsView() {
                     </Space>
                 </Space>
             </Col>
-            <Divider />
-            <Col xs={24} lg={12}>
-                <Space
-                    direction='vertical'
-                    style={{ width: '100%' }}
-                >
-                    {user.skills?.map((skill) => (
-                        <div key={skill.name}>
-                            <Typography.Text>
-                                {skill.name}
-                            </Typography.Text>
-                            <Progress
-                                percent={skill.percentage}
-                                success={{ percent: 0 }}
-                            />
-                        </div>
-                    ))}
-                </Space>
-            </Col>
+            <Divider/>
+            {
+                !!user.skills?.length && (
+                    <Col xs={24} lg={12}>
+                        <Space
+                            direction='vertical'
+                            style={{width: '100%'}}
+                        >
+                            {user.skills?.map((skill) => (
+                                <div key={skill.name}>
+                                    <Typography.Text>
+                                        {skill.name}
+                                    </Typography.Text>
+                                    <Progress
+                                        percent={skill.percentage}
+                                        success={{percent: 0}}
+                                    />
+                                </div>
+                            ))}
+                        </Space>
+                    </Col>
+                )
+            }
             <Col xs={24} lg={12}>
                 <Descriptions column={1} bordered size={'small'}>
                     <Descriptions.Item label={'País'}>
@@ -166,101 +171,107 @@ export default function UserDetailsView() {
                     </Descriptions.Item>
                 </Descriptions>
             </Col>
-            <Divider />
-            <Col xs={24}>
-                <Table<Post.Summary>
-                    dataSource={posts?.content}
-                    rowKey={'id'}
-                    loading={loadingFetch}
-                    pagination={{
-                        onChange: page => setPage(page - 1),
-                        total: posts?.totalElements,
-                        pageSize: 10
-                    }}
-                    columns={[
-                        {
-                            responsive: ['xs'],
-                            title: 'Posts',
-                            render(element) {
-                                return (
-                                    <Descriptions column={1}>
-                                        <Descriptions.Item label={'Título'}>
-                                            {element.title}
-                                        </Descriptions.Item>
-                                        <Descriptions.Item label={'Criação'}>
-                                            {moment(element.createdAt).format(
-                                                'DD/MM/YYYY'
-                                            )}
-                                        </Descriptions.Item>
-                                        <Descriptions.Item
-                                            label={'Atualização'}
-                                        >
-                                            {moment(element.updatedAt).format(
-                                                'DD/MM/YYYY'
-                                            )}
-                                        </Descriptions.Item>
-                                        <Descriptions.Item label={'Publicado'}>
-                                            <Switch checked={element.published} />
-                                        </Descriptions.Item>
-                                    </Descriptions>
-                                );
-                            },
-                        },
-                        {
-                            dataIndex: 'title',
-                            title: 'Título',
-                            ellipsis: true,
-                            width: 300,
-                            responsive: ['sm'],
-                            render(title: string) {
-                                return (
-                                    <Tooltip title={title}>{title}</Tooltip>
-                                );
-                            },
-                        },
-                        {
-                            dataIndex: 'createdAt',
-                            title: 'Criação',
-                            width: 180,
-                            align: 'center',
-                            responsive: ['sm'],
-                            render: (item) =>
-                                moment(item).format('DD/MM/YYYY'),
-                        },
-                        {
-                            dataIndex: 'updatedAt',
-                            title: 'Última atualização',
-                            width: 200,
-                            align: 'center',
-                            responsive: ['sm'],
-                            render: (item) =>
-                                moment(item).format(
-                                    'DD/MM/YYYY \\à\\s hh:mm'
-                                ),
-                        },
-                        {
-                            dataIndex: 'published',
-                            title: 'Publicado',
-                            align: 'center',
-                            width: 120,
-                            responsive: ['sm'],
-                            render(published: boolean, post) {
-                                return (
-                                    <Switch
-                                        checked={published}
-                                        loading={loadingToggle}
-                                        onChange={() => {
-                                            togglePostStatus(post).then(() => {
-                                                fetchUserPosts(user.id);
-                                            });
-                                        }}
-                                    />
-                                );
-                            },
-                        },
-                    ]}
-                />
-            </Col>
+            {
+                user.role === 'EDITOR' && (
+                    <>
+                        <Divider/>
+                        <Col xs={24}>
+                            <Table<Post.Summary>
+                                dataSource={posts?.content}
+                                rowKey={'id'}
+                                loading={loadingFetch}
+                                pagination={{
+                                    onChange: page => setPage(page - 1),
+                                    total: posts?.totalElements,
+                                    pageSize: 10
+                                }}
+                                columns={[
+                                    {
+                                        responsive: ['xs'],
+                                        title: 'Posts',
+                                        render(element) {
+                                            return (
+                                                <Descriptions column={1}>
+                                                    <Descriptions.Item label={'Título'}>
+                                                        {element.title}
+                                                    </Descriptions.Item>
+                                                    <Descriptions.Item label={'Criação'}>
+                                                        {moment(element.createdAt).format(
+                                                            'DD/MM/YYYY'
+                                                        )}
+                                                    </Descriptions.Item>
+                                                    <Descriptions.Item
+                                                        label={'Atualização'}
+                                                    >
+                                                        {moment(element.updatedAt).format(
+                                                            'DD/MM/YYYY'
+                                                        )}
+                                                    </Descriptions.Item>
+                                                    <Descriptions.Item label={'Publicado'}>
+                                                        <Switch checked={element.published}/>
+                                                    </Descriptions.Item>
+                                                </Descriptions>
+                                            );
+                                        },
+                                    },
+                                    {
+                                        dataIndex: 'title',
+                                        title: 'Título',
+                                        ellipsis: true,
+                                        width: 300,
+                                        responsive: ['sm'],
+                                        render(title: string) {
+                                            return (
+                                                <Tooltip title={title}>{title}</Tooltip>
+                                            );
+                                        },
+                                    },
+                                    {
+                                        dataIndex: 'createdAt',
+                                        title: 'Criação',
+                                        width: 180,
+                                        align: 'center',
+                                        responsive: ['sm'],
+                                        render: (item) =>
+                                            moment(item).format('DD/MM/YYYY'),
+                                    },
+                                    {
+                                        dataIndex: 'updatedAt',
+                                        title: 'Última atualização',
+                                        width: 200,
+                                        align: 'center',
+                                        responsive: ['sm'],
+                                        render: (item) =>
+                                            moment(item).format(
+                                                'DD/MM/YYYY \\à\\s hh:mm'
+                                            ),
+                                    },
+                                    {
+                                        dataIndex: 'published',
+                                        title: 'Publicado',
+                                        align: 'center',
+                                        width: 120,
+                                        responsive: ['sm'],
+                                        render(published: boolean, post) {
+                                            return (
+                                                <Switch
+                                                    checked={published}
+                                                    loading={loadingToggle}
+                                                    onChange={() => {
+                                                        togglePostStatus(post).then(() => {
+                                                            fetchUserPosts(user.id);
+                                                        });
+                                                    }}
+                                                />
+                                            );
+                                        },
+                                    },
+                                ]}
+                            />
+                        </Col>
+                    </>
+                )
+            }
         </Row>
     );
 }
