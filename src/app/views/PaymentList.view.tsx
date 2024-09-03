@@ -135,6 +135,7 @@ export default function PaymentListView() {
                                 onConfirm={() => {
                                     confirm({
                                         title: 'Remover agendamento?',
+                                        cancelText: 'Cancelar',
                                         content: 'Esta é uma ação irreversível. Ao remover um agendamento, ele não poderá ser recuperado!',
                                         onOk() {
                                             console.log('todo: implement schedule deletion');
