@@ -19,6 +19,7 @@ import { useState } from 'react';
 import { Key } from 'antd/lib/table/interface';
 import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
 import DoubleConfirm from "../components/DoubleConfirm";
+import {Link} from "react-router-dom";
 
 export default function PaymentListView() {
     const { payments, fetchPayments } = usePayments();
@@ -168,7 +169,7 @@ export default function PaymentListView() {
                         ellipsis: true,
                         width: 180,
                         render(payee: Payment.Summary['payee']) {
-                            return payee.name;
+                            return <Link to={`/usuarios/${payee.id}`}>{payee.name}</Link>;
                         },
                     },
                     {
