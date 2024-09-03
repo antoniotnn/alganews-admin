@@ -11,19 +11,20 @@ import {
 } from 'antd';
 import { Payment } from 'tnn-sdk';
 import moment from 'moment';
-import { useEffect } from 'react';
+import {useEffect, useState} from 'react';
 import { EyeOutlined, DeleteOutlined } from '@ant-design/icons';
 import usePayments from '../../core/hooks/usePayments';
 import confirm from 'antd/lib/modal/confirm';
-import { useState } from 'react';
-import { Key } from 'antd/lib/table/interface';
+import {Key, SorterResult} from 'antd/lib/table/interface';
 import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
 import DoubleConfirm from "../components/DoubleConfirm";
 import {Link} from "react-router-dom";
 
 export default function PaymentListView() {
-    const { payments, fetchPayments } = usePayments();
+    const { payments, fetchPayments, fetchingPayments } = usePayments();
     const [yearMonth, setYearMonth] = useState<string | undefined>();
+    const [page, setPage] = useState(1);
+    const [sortingOrder, setSortingOrder] = useState<'asc' | 'desc' | undefined>();
     const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
     const { xs } = useBreakpoint();
 
@@ -34,10 +35,11 @@ export default function PaymentListView() {
     useEffect(() => {
         fetchPayments({
             scheduledToYearMonth: yearMonth,
-            sort: ['scheduledTo', 'desc'],
-            page: 0,
+            sort: ['scheduledTo', sortingOrder || 'desc'],
+            page: page - 1,
+            size: 7,
         });
-    }, [fetchPayments, yearMonth]);
+    }, [fetchPayments, yearMonth, page, sortingOrder]);
 
     return (
         <>
@@ -83,6 +85,19 @@ export default function PaymentListView() {
             <Table<Payment.Summary>
                 dataSource={payments?.content}
                 rowKey='id'
+                loading={fetchingPayments}
+                onChange={(p, f, sorter) => {
+                    const { order } = sorter as SorterResult<Payment.Summary>;
+                    order === 'ascend'
+                        ? setSortingOrder('asc')
+                        : setSortingOrder('desc');
+                }}
+                pagination={{
+                    current: page,
+                    onChange: setPage,
+                    total: payments?.totalElements,
+                    pageSize: 7,
+                }}
                 rowSelection={{
                     selectedRowKeys,
                     onChange: setSelectedRowKeys,
@@ -177,6 +192,9 @@ export default function PaymentListView() {
                         title: 'Agendamento',
                         align: 'center',
                         width: 140,
+                        sorter() {
+                            return 0;
+                        },
                         responsive: ['sm'],
                         render(date: string) {
                             return moment(date).format('DD/MM/YYYY');
