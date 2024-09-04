@@ -12,6 +12,7 @@ import { message, notification } from 'antd';
 import CustomError from "tnn-sdk/dist/utils/CustomError";
 import UserEditView from "./views/UserEdit.view";
 import UserDetailsView from "./views/UserDetails.view";
+import PaymentDetailsView from "./views/PaymentDetails.view";
 
 export default function Routes() {
     useEffect(() => {
@@ -74,6 +75,11 @@ export default function Routes() {
                 path={'/pagamentos/cadastro'}
                 exact
                 component={PaymentCreateView}
+            />
+            <Route
+                path={'/pagamentos/:id'}
+                exact
+                component={PaymentDetailsView}
             />
             <Route
                 path={'/fluxo-de-caixa/despesas'}
