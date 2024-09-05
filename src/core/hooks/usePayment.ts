@@ -9,6 +9,7 @@ export default function usePayment() {
 
     const [fetchingPosts, setFetchingPosts] = useState(false);
     const [fetchingPayment, setFetchingPayment] = useState(false);
+    const [approvingPayment, setApprovingPayment] = useState(false);
 
     const [paymentNotFound, setPaymentNotFound] = useState(false);
     const [postsNotFound, setPostsNotFound] = useState(false);
@@ -21,10 +22,20 @@ export default function usePayment() {
         } catch (error) {
             if (error instanceof ResourceNotFoundError) {
                 setPaymentNotFound(true);
+                return;
             }
             throw error;
         } finally {
             setFetchingPayment(false);
+        }
+    }, []);
+
+    const approvePayment = useCallback(async (paymentId: number) => {
+        try {
+            setApprovingPayment(true);
+            await PaymentService.approvePayment(paymentId);
+        } finally {
+            setApprovingPayment(false);
         }
     }, []);
 
@@ -36,6 +47,7 @@ export default function usePayment() {
         } catch (error) {
             if (error instanceof ResourceNotFoundError) {
                 setPostsNotFound(true);
+                return;
             }
             throw error;
         } finally {
@@ -46,8 +58,10 @@ export default function usePayment() {
     return {
         fetchPayment,
         fetchPosts,
+        approvePayment,
         fetchingPayment,
         fetchingPosts,
+        approvingPayment,
         paymentNotFound,
         postsNotFound,
         posts,
