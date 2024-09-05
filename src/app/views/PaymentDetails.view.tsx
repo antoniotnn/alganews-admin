@@ -78,7 +78,7 @@ export default function PaymentDetailsView() {
                         <Button
                             className='no-print'
                             loading={approvingPayment}
-                            disabled={!payment}
+                            disabled={!payment || !payment.canBeApproved}
                             icon={<CheckCircleOutlined />}
                             type={'primary'}
                             danger
