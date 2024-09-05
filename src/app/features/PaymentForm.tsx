@@ -11,7 +11,21 @@ export default function PaymentForm() {
             <Row gutter={24}>
                 <Col xs={24} lg={8}>
                     <Form.Item label={'Editor'}>
-                        <Select showSearch>
+                        <Select
+                            showSearch
+                            filterOption={(input, option) => {
+                                return (
+                                    option?.children
+                                        .normalize('NFD')
+                                        .replace(/[\u0300-\u036f]/g, '')
+                                        .toLowerCase()
+                                        .indexOf(input.toLowerCase()) >= 0 ||
+                                    (option?.children as string)
+                                        .toLowerCase()
+                                        .indexOf(input.toLowerCase()) >= 0
+                                );
+                            }}
+                        >
                             {
                                 users.map((user) => (
                                     <Select.Option key={user.id} value={user.id}>
