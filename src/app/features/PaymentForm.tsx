@@ -1,6 +1,7 @@
 import {Payment} from "tnn-sdk";
 import {Col, DatePicker, Form, Row, Select} from "antd";
 import useUsers from "../../core/hooks/useUsers";
+import moment from "moment";
 
 export default function PaymentForm() {
     const {editors} = useUsers();
@@ -47,6 +48,11 @@ export default function PaymentForm() {
                 <Col xs={24} lg={8}>
                     <Form.Item label={'Agendamento'}>
                         <DatePicker
+                            disabledDate={(date) => {
+                                return date.isBefore(moment() ||
+                                    date.isAfter(moment().add(7, 'days'))
+                                );
+                            }}
                             style={{width: '100%'}}
                             format={'DD/MM/YYYY'}
                         />
