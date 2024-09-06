@@ -7,7 +7,7 @@ import {DeleteOutlined, PlusOutlined} from "@ant-design/icons";
 import CurrencyInput from "../components/CurrencyInput";
 
 export default function PaymentForm() {
-    const [form] = useForm();
+    const [form] = useForm<Payment.Input>();
     const {editors} = useUsers();
     return (
         <Form<Payment.Input>
@@ -120,8 +120,13 @@ export default function PaymentForm() {
                                                         >
                                                             <CurrencyInput
                                                                 onChange={(a, amount) => {
+                                                                    const { bonuses } = form.getFieldsValue();
                                                                     form.setFieldsValue({
-                                                                        [field.name]: amount
+                                                                        bonuses: bonuses?.map((bonus, index) => {
+                                                                            return index === field.name
+                                                                                ? {title: bonus.title, amount}
+                                                                                : bonus;
+                                                                        }),
                                                                     });
                                                                 }}
                                                             />
