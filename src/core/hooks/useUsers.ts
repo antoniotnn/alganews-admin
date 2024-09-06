@@ -8,6 +8,9 @@ export default function useUsers() {
     const dispatch = useDispatch();
     const users = useSelector((state: RootState) => state.user.list);
     const fetching = useSelector((state: RootState) => state.user.fetching);
+    const editors = useSelector((state: RootState) => state.user.list
+        .filter((user) => user.role === 'EDITOR'));
+
 
     const fetchUsers = useCallback(() => {
         dispatch(UserActions.getAllUsers())
@@ -24,6 +27,7 @@ export default function useUsers() {
     return {
         fetchUsers,
         users,
+        editors,
         fetching,
         toggleUserStatus
     };

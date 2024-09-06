@@ -3,7 +3,7 @@ import {Col, DatePicker, Form, Row, Select} from "antd";
 import useUsers from "../../core/hooks/useUsers";
 
 export default function PaymentForm() {
-    const {users} = useUsers();
+    const {editors} = useUsers();
     return (
         <Form<Payment.Input>
             layout={'vertical'}
@@ -27,9 +27,9 @@ export default function PaymentForm() {
                             }}
                         >
                             {
-                                users.map((user) => (
-                                    <Select.Option key={user.id} value={user.id}>
-                                        {user.name}
+                                editors.map((editor) => (
+                                    <Select.Option key={editor.id} value={editor.id}>
+                                        {editor.name}
                                     </Select.Option>
                                 ))
                             }
