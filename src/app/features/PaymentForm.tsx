@@ -16,7 +16,7 @@ import { Payment } from 'tnn-sdk';
 import moment, { Moment } from 'moment';
 import useUsers from '../../core/hooks/useUsers';
 import CurrencyInput from '../components/CurrencyInput';
-import {useCallback} from "react";
+import {useCallback, useState} from "react";
 import {FieldData} from "rc-field-form/es/interface";
 import debounce from 'lodash.debounce';
 import usePayment from "../../core/hooks/usePayment";
@@ -26,6 +26,12 @@ export default function PaymentForm() {
     const [form] = useForm<Payment.Input>();
     const { editors } = useUsers();
     const { fetchingPaymentPreview, paymentPreview, fetchPaymentPreview } = usePayment();
+    const [scheduledTo, setScheduledTo] = useState('');
+
+    const updateScheduledDate = useCallback(() => {
+        const { scheduledTo } = form.getFieldsValue();
+        setScheduledTo(scheduledTo);
+    }, [form]);
 
     const getPaymentPreview = useCallback(() => {
         const { accountingPeriod, bonuses, payee } = form.getFieldsValue();
@@ -46,6 +52,10 @@ export default function PaymentForm() {
                 || field.name.includes('bonuses')
             ) {
                 getPaymentPreview();
+            }
+
+            if (field.name.includes('scheduledTo')) {
+                updateScheduledDate();
             }
         }
     }, [getPaymentPreview]);
@@ -158,7 +168,10 @@ export default function PaymentForm() {
                                     </Space>
                                 </Descriptions.Item>
                                 <Descriptions.Item label={'Agendamento'}>
-                                    05/08/2021
+                                    {
+                                        scheduledTo &&
+                                            moment(scheduledTo).format('DD/MM/YYYY')
+                                    }
                                 </Descriptions.Item>
                                 <Descriptions.Item label={'Palavras'}>
                                     {
