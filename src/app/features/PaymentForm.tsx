@@ -17,7 +17,7 @@ import { useForm } from 'antd/lib/form/Form';
 import { Payment } from 'tnn-sdk';
 import moment, { Moment } from 'moment';
 import { FieldData } from 'rc-field-form/lib/interface';
-import { useCallback } from 'react';
+import {useCallback} from 'react';
 import debounce from 'lodash.debounce';
 import { InfoCircleFilled } from '@ant-design/icons';
 import useUsers from '../../core/hooks/useUsers';
@@ -26,6 +26,8 @@ import usePayment from '../../core/hooks/usePayment';
 import transformIntoBrl from '../../core/utils/transformIntoBrl';
 import { useState } from 'react';
 import AskForPaymentPreview from './AskForPaymentPreview';
+import CustomError from "tnn-sdk/dist/utils/CustomError";
+import {BusinessError} from "tnn-sdk/dist/errors";
 
 export default function PaymentForm() {
     const [form] = useForm<Payment.Input>();
@@ -37,11 +39,16 @@ export default function PaymentForm() {
         fetchPaymentPreview,
     } = usePayment();
     const [scheduledTo, setScheduledTo] = useState('');
+    const [paymentPreviewError, setPaymentPreviewError] = useState<CustomError>();
 
     const updateScheduleDate = useCallback(() => {
         const { scheduledTo } = form.getFieldsValue();
         setScheduledTo(scheduledTo);
     }, [form]);
+
+    const clearPaymentPreviewError = useCallback(() => {
+        setPaymentPreviewError(undefined);
+    }, []);
 
     const getPaymentPreview = useCallback(async () => {
         const { accountingPeriod, bonuses, payee } = form.getFieldsValue();
@@ -52,14 +59,19 @@ export default function PaymentForm() {
                     accountingPeriod,
                     bonuses: bonuses || [],
                 });
+                clearPaymentPreviewError();
             } catch (err) {
                 clearPaymentPreview();
+                if (err instanceof BusinessError) {
+                    setPaymentPreviewError(err);
+                }
                 throw err;
             }
         } else {
             clearPaymentPreview();
+            clearPaymentPreviewError();
         }
-    }, [form, fetchPaymentPreview, clearPaymentPreview]);
+    }, [form, fetchPaymentPreview, clearPaymentPreviewError, clearPaymentPreview]);
 
     const handleFormChange = useCallback(
         ([field]: FieldData[]) => {
@@ -166,7 +178,7 @@ export default function PaymentForm() {
                 <Divider />
                 <Col xs={24} lg={12}>
                     {!paymentPreview ? (
-                        <AskForPaymentPreview />
+                        <AskForPaymentPreview error={paymentPreviewError}/>
                     ) : (
                         <Tabs defaultActiveKey={'payment'}>
                             <Tabs.TabPane tab={'Demonstrativo'} key={'payment'}>
