@@ -1,7 +1,7 @@
 import {
     Button,
     DatePicker,
-    Descriptions,
+    Descriptions, notification,
     Popconfirm,
     Row,
     Space,
@@ -21,7 +21,7 @@ import DoubleConfirm from "../components/DoubleConfirm";
 import {Link} from "react-router-dom";
 
 export default function PaymentListView() {
-    const { payments, fetchPayments, fetchingPayments } = usePayments();
+    const { payments, fetchPayments, fetchingPayments, approvePaymentsBatch, approvingPaymentsBatch } = usePayments();
     const [yearMonth, setYearMonth] = useState<string | undefined>();
     const [page, setPage] = useState(1);
     const [sortingOrder, setSortingOrder] = useState<'asc' | 'desc' | undefined>();
@@ -60,8 +60,11 @@ export default function PaymentListView() {
                         disabled={selectedRowKeys.length === 0}
                         modalTitle={'Aprovar agendamento'}
                         modalContent={'Esta é uma ação irreversível. Ao aprovar um agendamento, ele não poderá ser removido!'}
-                        onConfirm={() => {
-                            console.log('todo: implement payment batch approval');
+                        onConfirm={async () => {
+                            await approvePaymentsBatch(selectedRowKeys as number[]);
+                            notification.success({
+                                message: 'Os pagamentos selecionados foram aprovados',
+                            });
                         }}
                     >
                         <Button

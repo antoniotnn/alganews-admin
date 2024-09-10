@@ -5,6 +5,17 @@ export default function usePayments() {
     const [fetchingPayments, setFetchingPayments] = useState(false);
     const [payments, setPayments] = useState<Payment.Paginated>();
 
+    const [approvingPaymentsBatch, setApprovingPaymentsBatch] = useState(false);
+
+    const approvePaymentsBatch = useCallback(async (paymentIds: number[]) => {
+        try {
+            setApprovingPaymentsBatch(true);
+            await PaymentService.approvePaymentsBatch(paymentIds);
+        } finally {
+            setApprovingPaymentsBatch(false);
+        }
+    }, []);
+
     const fetchPayments = useCallback(
         async (query: Payment.Query) => {
             try {
@@ -21,6 +32,8 @@ export default function usePayments() {
     return {
         payments,
         fetchPayments,
-        fetchingPayments
+        fetchingPayments,
+        approvingPaymentsBatch,
+        approvePaymentsBatch
     }
 }
