@@ -23,33 +23,21 @@ import DoubleConfirm from '../components/DoubleConfirm';
 import { Link } from 'react-router-dom';
 
 export default function PaymentListView() {
+    const { xs } = useBreakpoint();
     const {
         payments,
+        fetching,
+        query,
         fetchPayments,
-        fetchingPayments,
-        approvePaymentsBatch,
-        approvingPaymentsBatch,
+        setQuery,
+        approvePaymentsInBatch,
     } = usePayments();
-    const [yearMonth, setYearMonth] = useState<string | undefined>();
-    const [page, setPage] = useState(1);
-    const [sortingOrder, setSortingOrder] = useState<
-        'asc' | 'desc' | undefined
-    >();
+
     const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
-    const { xs } = useBreakpoint();
 
     useEffect(() => {
-        console.log(selectedRowKeys);
-    }, [selectedRowKeys]);
-
-    useEffect(() => {
-        fetchPayments({
-            scheduledToYearMonth: yearMonth,
-            sort: ['scheduledTo', sortingOrder || 'desc'],
-            page: page - 1,
-            size: 7,
-        });
-    }, [fetchPayments, yearMonth, page, sortingOrder]);
+        fetchPayments();
+    }, [fetchPayments]);
 
     return (
         <>
@@ -73,7 +61,7 @@ export default function PaymentListView() {
                             'Esta é uma ação irreversível. Ao aprovar um agendamento, ele não poderá ser removido!'
                         }
                         onConfirm={async () => {
-                            await approvePaymentsBatch(selectedRowKeys as number[]);
+                            await approvePaymentsInBatch(selectedRowKeys as number[]);
                             notification.success({
                                 message: 'Os pagamentos selecionados foram aprovados',
                             });
@@ -92,7 +80,9 @@ export default function PaymentListView() {
                         format={'MMMM - YYYY'}
                         placeholder={'Filtrar por mês'}
                         onChange={(date) => {
-                            setYearMonth(date ? date?.format('YYYY-MM') : undefined);
+                            setQuery({
+                                scheduledToYearMonth: date ? date.format('YYYY-MM') : undefined,
+                            });
                         }}
                     />
                 </Space>
@@ -100,16 +90,20 @@ export default function PaymentListView() {
             <Table<Payment.Summary>
                 dataSource={payments?.content}
                 rowKey='id'
-                loading={fetchingPayments}
+                loading={fetching}
                 onChange={(p, f, sorter) => {
                     const { order } = sorter as SorterResult<Payment.Summary>;
-                    order === 'ascend' ? setSortingOrder('asc') : setSortingOrder('desc');
+                    const direction = order?.replace('end', '');
+                    if (direction && direction !== query.sort![1])
+                        setQuery({
+                            sort: [query.sort![0], direction as 'asc' | 'desc'],
+                        });
                 }}
                 pagination={{
-                    current: page,
-                    onChange: setPage,
+                    current: query.page ? query.page + 1 : 1,
+                    onChange: (page) => setQuery({ page: page - 1 }),
                     total: payments?.totalElements,
-                    pageSize: 7,
+                    pageSize: query.size,
                 }}
                 rowSelection={{
                     selectedRowKeys,

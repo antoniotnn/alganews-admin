@@ -1,39 +1,36 @@
-import {Payment, PaymentService} from "tnn-sdk";
-import {useCallback, useState} from "react";
+import { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../store';
+import * as PaymentActions from '../store/Payment.slice';
 
 export default function usePayments() {
-    const [fetchingPayments, setFetchingPayments] = useState(false);
-    const [payments, setPayments] = useState<Payment.Paginated>();
+    const dispatch = useDispatch();
 
-    const [approvingPaymentsBatch, setApprovingPaymentsBatch] = useState(false);
+    const fetching = useSelector((s: RootState) => s.payment.fetching);
+    const payments = useSelector((s: RootState) => s.payment.paginated);
+    const query = useSelector((s: RootState) => s.payment.query);
 
-    const approvePaymentsBatch = useCallback(async (paymentIds: number[]) => {
-        try {
-            setApprovingPaymentsBatch(true);
-            await PaymentService.approvePaymentsBatch(paymentIds);
-        } finally {
-            setApprovingPaymentsBatch(false);
-        }
-    }, []);
+    const approvePaymentsInBatch = useCallback(
+        (ids: number[]) => dispatch(PaymentActions.approvePaymentsInBatch(ids)),
+        [dispatch]
+    );
 
     const fetchPayments = useCallback(
-        async (query: Payment.Query) => {
-            try {
-                setFetchingPayments(true);
-                const payments = await PaymentService.getAllPayments(query);
-                setPayments(payments);
-            } finally {
-                setFetchingPayments(false);
-            }
-        },
-        []
+        () => dispatch(PaymentActions.getAllPayments()),
+        [dispatch]
+    );
+
+    const setQuery = useCallback(
+        (query) => dispatch(PaymentActions.setQuery(query)),
+        [dispatch]
     );
 
     return {
         payments,
+        fetching,
+        query,
         fetchPayments,
-        fetchingPayments,
-        approvingPaymentsBatch,
-        approvePaymentsBatch
-    }
+        approvePaymentsInBatch,
+        setQuery,
+    };
 }

@@ -1,6 +1,7 @@
 import { Payment, PaymentService, Post } from 'tnn-sdk';
-import {useCallback, useState} from 'react';
-import {ResourceNotFoundError} from "tnn-sdk/dist/errors";
+import { ResourceNotFoundError } from 'tnn-sdk/dist/errors';
+import { useCallback } from 'react';
+import { useState } from 'react';
 
 export default function usePayment() {
     const [posts, setPosts] = useState<Post.WithEarnings[]>([]);
@@ -67,7 +68,7 @@ export default function usePayment() {
                 setFetchingPaymentPreview(false);
             }
         },
-    []
+        []
     );
 
     const schedulePayment = useCallback(async (paymentInput: Payment.Input) => {
@@ -82,7 +83,6 @@ export default function usePayment() {
     const clearPaymentPreview = useCallback(() => {
         setPaymentPreview(undefined);
     }, []);
-
 
     return {
         fetchPayment,
@@ -100,6 +100,6 @@ export default function usePayment() {
         paymentPreview,
         clearPaymentPreview,
         schedulePayment,
-        schedulingPayment
+        schedulingPayment,
     };
 }
