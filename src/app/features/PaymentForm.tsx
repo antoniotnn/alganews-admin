@@ -1,4 +1,4 @@
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import {DeleteOutlined, PlusOutlined} from '@ant-design/icons';
 import {
     Button,
     Col,
@@ -8,30 +8,30 @@ import {
     Form,
     Input,
     Row,
-    Select,
+    Select, Skeleton,
     Space,
     Tabs,
     Tooltip,
 } from 'antd';
-import { useForm } from 'antd/lib/form/Form';
-import { Payment } from 'tnn-sdk';
-import moment, { Moment } from 'moment';
-import { FieldData } from 'rc-field-form/lib/interface';
+import {useForm} from 'antd/lib/form/Form';
+import {Payment} from 'tnn-sdk';
+import moment, {Moment} from 'moment';
+import {FieldData} from 'rc-field-form/lib/interface';
 import {useCallback} from 'react';
 import debounce from 'lodash.debounce';
-import { InfoCircleFilled } from '@ant-design/icons';
+import {InfoCircleFilled} from '@ant-design/icons';
 import useUsers from '../../core/hooks/useUsers';
 import CurrencyInput from '../components/CurrencyInput';
 import usePayment from '../../core/hooks/usePayment';
 import transformIntoBrl from '../../core/utils/transformIntoBrl';
-import { useState } from 'react';
+import {useState} from 'react';
 import AskForPaymentPreview from './AskForPaymentPreview';
 import CustomError from "tnn-sdk/dist/utils/CustomError";
 import {BusinessError} from "tnn-sdk/dist/errors";
 
 export default function PaymentForm() {
     const [form] = useForm<Payment.Input>();
-    const { editors } = useUsers();
+    const {editors} = useUsers();
     const {
         fetchingPaymentPreview,
         clearPaymentPreview,
@@ -42,7 +42,7 @@ export default function PaymentForm() {
     const [paymentPreviewError, setPaymentPreviewError] = useState<CustomError>();
 
     const updateScheduleDate = useCallback(() => {
-        const { scheduledTo } = form.getFieldsValue();
+        const {scheduledTo} = form.getFieldsValue();
         setScheduledTo(scheduledTo);
     }, [form]);
 
@@ -51,7 +51,7 @@ export default function PaymentForm() {
     }, []);
 
     const getPaymentPreview = useCallback(async () => {
-        const { accountingPeriod, bonuses, payee } = form.getFieldsValue();
+        const {accountingPeriod, bonuses, payee} = form.getFieldsValue();
         if (payee.id && accountingPeriod.endsOn && accountingPeriod.startsOn) {
             try {
                 await fetchPaymentPreview({
@@ -131,14 +131,14 @@ export default function PaymentForm() {
                 </Col>
                 <Col xs={24} lg={8}>
                     <Form.Item hidden name={['accountingPeriod', 'startsOn']}>
-                        <Input hidden />
+                        <Input hidden/>
                     </Form.Item>
                     <Form.Item hidden name={['accountingPeriod', 'endsOn']}>
-                        <Input hidden />
+                        <Input hidden/>
                     </Form.Item>
                     <Form.Item label={'Período'} name={'_accountingPeriod'}>
                         <DatePicker.RangePicker
-                            style={{ width: '100%' }}
+                            style={{width: '100%'}}
                             format={'DD/MM/YYYY'}
                             onChange={(date) => {
                                 if (date !== null) {
@@ -170,101 +170,107 @@ export default function PaymentForm() {
                                     date.isAfter(moment().add(7, 'days'))
                                 );
                             }}
-                            style={{ width: '100%' }}
+                            style={{width: '100%'}}
                             format={'DD/MM/YYYY'}
                         />
                     </Form.Item>
                 </Col>
-                <Divider />
+                <Divider/>
                 <Col xs={24} lg={12}>
-                    {!paymentPreview ? (
-                        <AskForPaymentPreview error={paymentPreviewError}/>
-                    ) : (
-                        <Tabs defaultActiveKey={'payment'}>
-                            <Tabs.TabPane tab={'Demonstrativo'} key={'payment'}>
-                                <Descriptions
-                                    labelStyle={{ width: 160 }}
-                                    bordered
-                                    size={'small'}
-                                    column={1}
-                                >
-                                    <Descriptions.Item label={'Editor'}>
-                                        {paymentPreview?.payee.name}
-                                    </Descriptions.Item>
-                                    <Descriptions.Item label={'Período'}>
-                                        <Space>
-                                            {moment(paymentPreview?.accountingPeriod.startsOn).format(
-                                                'DD/MM/YYYY'
-                                            )}
-                                            <span>à</span>
-                                            {moment(paymentPreview?.accountingPeriod.endsOn).format(
-                                                'DD/MM/YYYY'
-                                            )}
-                                        </Space>
-                                    </Descriptions.Item>
-                                    <Descriptions.Item label={'Agendamento'}>
-                                        {scheduledTo && moment(scheduledTo).format('DD/MM/YYYY')}
-                                    </Descriptions.Item>
-                                    <Descriptions.Item label={'Palavras'}>
-                                        {paymentPreview?.earnings.words}
-                                    </Descriptions.Item>
-                                    <Descriptions.Item label={'Ganhos'}>
-                                        {transformIntoBrl(paymentPreview?.grandTotalAmount)}
-                                    </Descriptions.Item>
-                                    {paymentPreview?.bonuses.map((bonus, index) => (
-                                        <Descriptions.Item
-                                            key={index}
-                                            label={
-                                                <Space>
-                                                    {`Bônus ${index + 1}`}
-                                                    <Tooltip title={bonus.title}>
-                                                        <InfoCircleFilled
-                                                            style={{ color: '#09f', fontSize: 18 }}
-                                                        />
-                                                    </Tooltip>
-                                                </Space>
-                                            }
+                    {
+                        fetchingPaymentPreview
+                            ? <>
+                                <Skeleton/>
+                                <Skeleton title={false}/>
+                            </>
+                            : !paymentPreview ? (
+                                <AskForPaymentPreview error={paymentPreviewError}/>
+                            ) : (
+                                <Tabs defaultActiveKey={'payment'}>
+                                    <Tabs.TabPane tab={'Demonstrativo'} key={'payment'}>
+                                        <Descriptions
+                                            labelStyle={{width: 160}}
+                                            bordered
+                                            size={'small'}
+                                            column={1}
                                         >
-                                            {transformIntoBrl(bonus.amount)}
-                                        </Descriptions.Item>
-                                    ))}
-                                    <Descriptions.Item label={'Ganhos de posts'}>
-                                        {transformIntoBrl(paymentPreview?.earnings.totalAmount)}
-                                    </Descriptions.Item>
-                                </Descriptions>
-                            </Tabs.TabPane>
-                            <Tabs.TabPane tab={'Dados bancários'} key={'bankAccount'}>
-                                <Descriptions
-                                    bordered
-                                    labelStyle={{ width: 160 }}
-                                    size={'small'}
-                                    column={1}
-                                >
-                                    <Descriptions.Item label={'Código do Banco'}>
-                                        {paymentPreview?.bankAccount.bankCode}
-                                    </Descriptions.Item>
-                                    <Descriptions.Item label={'Número da conta'}>
-                                        {paymentPreview?.bankAccount.number}
-                                    </Descriptions.Item>
-                                    <Descriptions.Item label={'Dígito da conta'}>
-                                        {paymentPreview?.bankAccount.digit}
-                                    </Descriptions.Item>
-                                    <Descriptions.Item label={'Agência'}>
-                                        {paymentPreview?.bankAccount.agency}
-                                    </Descriptions.Item>
-                                    <Descriptions.Item label={'Tipo de conta'}>
-                                        {paymentPreview?.bankAccount.type === 'CHECKING'
-                                            ? 'Conta corrente'
-                                            : 'Conta poupança'}
-                                    </Descriptions.Item>
-                                </Descriptions>
-                            </Tabs.TabPane>
-                        </Tabs>
-                    )}
+                                            <Descriptions.Item label={'Editor'}>
+                                                {paymentPreview?.payee.name}
+                                            </Descriptions.Item>
+                                            <Descriptions.Item label={'Período'}>
+                                                <Space>
+                                                    {moment(paymentPreview?.accountingPeriod.startsOn).format(
+                                                        'DD/MM/YYYY'
+                                                    )}
+                                                    <span>à</span>
+                                                    {moment(paymentPreview?.accountingPeriod.endsOn).format(
+                                                        'DD/MM/YYYY'
+                                                    )}
+                                                </Space>
+                                            </Descriptions.Item>
+                                            <Descriptions.Item label={'Agendamento'}>
+                                                {scheduledTo && moment(scheduledTo).format('DD/MM/YYYY')}
+                                            </Descriptions.Item>
+                                            <Descriptions.Item label={'Palavras'}>
+                                                {paymentPreview?.earnings.words}
+                                            </Descriptions.Item>
+                                            <Descriptions.Item label={'Ganhos'}>
+                                                {transformIntoBrl(paymentPreview?.grandTotalAmount)}
+                                            </Descriptions.Item>
+                                            {paymentPreview?.bonuses.map((bonus, index) => (
+                                                <Descriptions.Item
+                                                    key={index}
+                                                    label={
+                                                        <Space>
+                                                            {`Bônus ${index + 1}`}
+                                                            <Tooltip title={bonus.title}>
+                                                                <InfoCircleFilled
+                                                                    style={{color: '#09f', fontSize: 18}}
+                                                                />
+                                                            </Tooltip>
+                                                        </Space>
+                                                    }
+                                                >
+                                                    {transformIntoBrl(bonus.amount)}
+                                                </Descriptions.Item>
+                                            ))}
+                                            <Descriptions.Item label={'Ganhos de posts'}>
+                                                {transformIntoBrl(paymentPreview?.earnings.totalAmount)}
+                                            </Descriptions.Item>
+                                        </Descriptions>
+                                    </Tabs.TabPane>
+                                    <Tabs.TabPane tab={'Dados bancários'} key={'bankAccount'}>
+                                        <Descriptions
+                                            bordered
+                                            labelStyle={{width: 160}}
+                                            size={'small'}
+                                            column={1}
+                                        >
+                                            <Descriptions.Item label={'Código do Banco'}>
+                                                {paymentPreview?.bankAccount.bankCode}
+                                            </Descriptions.Item>
+                                            <Descriptions.Item label={'Número da conta'}>
+                                                {paymentPreview?.bankAccount.number}
+                                            </Descriptions.Item>
+                                            <Descriptions.Item label={'Dígito da conta'}>
+                                                {paymentPreview?.bankAccount.digit}
+                                            </Descriptions.Item>
+                                            <Descriptions.Item label={'Agência'}>
+                                                {paymentPreview?.bankAccount.agency}
+                                            </Descriptions.Item>
+                                            <Descriptions.Item label={'Tipo de conta'}>
+                                                {paymentPreview?.bankAccount.type === 'CHECKING'
+                                                    ? 'Conta corrente'
+                                                    : 'Conta poupança'}
+                                            </Descriptions.Item>
+                                        </Descriptions>
+                                    </Tabs.TabPane>
+                                </Tabs>
+                            )}
                 </Col>
                 <Col xs={24} lg={12}>
                     <Form.List name={'bonuses'}>
-                        {(fields, { add, remove }) => {
+                        {(fields, {add, remove}) => {
                             return (
                                 <>
                                     {fields.map((field) => {
@@ -276,7 +282,7 @@ export default function PaymentForm() {
                                                         name={[field.name, 'title']}
                                                         label={'Descrição'}
                                                     >
-                                                        <Input placeholder={'E.g.: 1 milhão de views'} />
+                                                        <Input placeholder={'E.g.: 1 milhão de views'}/>
                                                     </Form.Item>
                                                 </Col>
                                                 <Col xs={24} lg={6}>
@@ -288,11 +294,11 @@ export default function PaymentForm() {
                                                     >
                                                         <CurrencyInput
                                                             onChange={(a, amount) => {
-                                                                const { bonuses } = form.getFieldsValue();
+                                                                const {bonuses} = form.getFieldsValue();
                                                                 form.setFieldsValue({
                                                                     bonuses: bonuses?.map((bonus, index) => {
                                                                         return index === field.name
-                                                                            ? { title: bonus.title, amount }
+                                                                            ? {title: bonus.title, amount}
                                                                             : bonus;
                                                                     }),
                                                                 });
@@ -304,7 +310,7 @@ export default function PaymentForm() {
                                                     <Form.Item label={'Remover'}>
                                                         <Button
                                                             onClick={() => remove(field.name)}
-                                                            icon={<DeleteOutlined />}
+                                                            icon={<DeleteOutlined/>}
                                                             danger
                                                             size='small'
                                                         />
@@ -317,7 +323,7 @@ export default function PaymentForm() {
                                         type='dashed'
                                         onClick={() => add()}
                                         block
-                                        icon={<PlusOutlined />}
+                                        icon={<PlusOutlined/>}
                                     >
                                         Adicionar bônus
                                     </Button>
