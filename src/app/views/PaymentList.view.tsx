@@ -1,7 +1,8 @@
 import {
     Button,
     DatePicker,
-    Descriptions, notification,
+    Descriptions,
+    notification,
     Popconfirm,
     Row,
     Space,
@@ -11,20 +12,29 @@ import {
 } from 'antd';
 import { Payment } from 'tnn-sdk';
 import moment from 'moment';
-import {useEffect, useState} from 'react';
+import { useEffect } from 'react';
 import { EyeOutlined, DeleteOutlined } from '@ant-design/icons';
 import usePayments from '../../core/hooks/usePayments';
 import confirm from 'antd/lib/modal/confirm';
-import {Key, SorterResult} from 'antd/lib/table/interface';
+import { useState } from 'react';
+import { Key, SorterResult } from 'antd/lib/table/interface';
 import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
-import DoubleConfirm from "../components/DoubleConfirm";
-import {Link} from "react-router-dom";
+import DoubleConfirm from '../components/DoubleConfirm';
+import { Link } from 'react-router-dom';
 
 export default function PaymentListView() {
-    const { payments, fetchPayments, fetchingPayments, approvePaymentsBatch, approvingPaymentsBatch } = usePayments();
+    const {
+        payments,
+        fetchPayments,
+        fetchingPayments,
+        approvePaymentsBatch,
+        approvingPaymentsBatch,
+    } = usePayments();
     const [yearMonth, setYearMonth] = useState<string | undefined>();
     const [page, setPage] = useState(1);
-    const [sortingOrder, setSortingOrder] = useState<'asc' | 'desc' | undefined>();
+    const [sortingOrder, setSortingOrder] = useState<
+        'asc' | 'desc' | undefined
+    >();
     const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
     const { xs } = useBreakpoint();
 
@@ -59,7 +69,9 @@ export default function PaymentListView() {
                         }
                         disabled={selectedRowKeys.length === 0}
                         modalTitle={'Aprovar agendamento'}
-                        modalContent={'Esta é uma ação irreversível. Ao aprovar um agendamento, ele não poderá ser removido!'}
+                        modalContent={
+                            'Esta é uma ação irreversível. Ao aprovar um agendamento, ele não poderá ser removido!'
+                        }
                         onConfirm={async () => {
                             await approvePaymentsBatch(selectedRowKeys as number[]);
                             notification.success({
@@ -91,9 +103,7 @@ export default function PaymentListView() {
                 loading={fetchingPayments}
                 onChange={(p, f, sorter) => {
                     const { order } = sorter as SorterResult<Payment.Summary>;
-                    order === 'ascend'
-                        ? setSortingOrder('asc')
-                        : setSortingOrder('desc');
+                    order === 'ascend' ? setSortingOrder('asc') : setSortingOrder('desc');
                 }}
                 pagination={{
                     current: page,
@@ -197,7 +207,7 @@ export default function PaymentListView() {
                         title: 'Agendamento',
                         align: 'center',
                         width: 140,
-                        sorter() {
+                        sorter(a, b) {
                             return 0;
                         },
                         responsive: ['sm'],
