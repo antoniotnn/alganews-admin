@@ -1,13 +1,18 @@
-import {Button, Row, Table} from "antd";
+import {Button, Col, Form, Input, Modal, Row, Table} from "antd";
 import {CashFlow} from "tnn-sdk";
 import useEntriesCategories from "../../core/hooks/useEntriesCategories";
-import {useEffect} from "react";
-import {DeleteOutlined} from "@ant-design/icons";
+import {useCallback, useEffect, useState} from "react";
+import {CheckCircleOutlined, DeleteOutlined} from "@ant-design/icons";
 
 export default function EntryCategoryManager(props: {
     type: 'EXPENSE' | 'REVENUE'
 }) {
     const {expenses, fetchCategories, revenues} = useEntriesCategories();
+
+    const [showCreationModal, setShowCreationModal] = useState(false);
+
+    const openCreationModal = useCallback(() => setShowCreationModal(true), []);
+    const closeCreationModal = useCallback(() => setShowCreationModal(false), []);
 
     useEffect(() => {
         fetchCategories();
@@ -16,13 +21,17 @@ export default function EntryCategoryManager(props: {
 
     return (
         <>
+            <Modal
+                footer={null}
+                title={'Adicionar categoria'}
+                visible={showCreationModal}
+                onCancel={closeCreationModal}
+            >
+                <CategoryForm />
+            </Modal>
             <Row justify={'space-between'} style={{ marginBottom: 16}}>
-                <Button>
-                    Atualizar categorias
-                </Button>
-                <Button>
-                    Adicionar categorias
-                </Button>
+                <Button>Atualizar categorias</Button>
+                <Button onClick={openCreationModal}>Adicionar categorias</Button>
             </Row>
             <Table<CashFlow.CategorySummary>
                 size={'small'}
@@ -58,4 +67,27 @@ export default function EntryCategoryManager(props: {
             </Table>
         </>
     );
+}
+
+function CategoryForm() {
+    return <Form layout={'vertical'}>
+        <Row justify={'end'}>
+            <Col xs={24}>
+                <Form.Item
+                    name={'name'}
+                    label={'Categoria'}
+                    rules={[
+                    {
+                        required: true,
+                        message: 'O nome da categoria é obrigatório'
+                    }
+                ]}>
+                    <Input placeholder={'Eg.: Infra'} />
+                </Form.Item>
+            </Col>
+            <Button type={'primary'} htmlType={'submit'} icon={<CheckCircleOutlined />}>
+                Cadastrar categoria
+            </Button>
+        </Row>
+    </Form>
 }

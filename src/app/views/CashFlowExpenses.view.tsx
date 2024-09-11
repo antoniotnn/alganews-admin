@@ -1,5 +1,5 @@
 import {Button, Divider, Modal, Row, Space, Tooltip, Typography} from "antd";
-import { InfoCircleFilled, TagOutlined } from "@ant-design/icons";
+import {InfoCircleFilled, TagOutlined} from "@ant-design/icons";
 import EntriesList from "../features/EntriesList";
 import useCashFlow from "../../core/hooks/useCashFlow";
 import DoubleConfirm from "../components/DoubleConfirm";
@@ -19,10 +19,11 @@ export default function CashFlowExpensesView() {
 
     return <>
         <Modal
-            closeIcon={<></>}
+            closeIcon={null}
             visible={showCategoryModal}
             onCancel={closeCategoryModal}
             footer={null}
+            title={'Gerenciar categorias'}
         >
             <EntryCategoryManager type={'EXPENSE'}/>
         </Modal>
