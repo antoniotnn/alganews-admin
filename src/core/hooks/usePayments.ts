@@ -1,9 +1,9 @@
+import { Key } from 'antd/lib/table/interface';
+import { Payment } from 'tnn-sdk';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
 import * as PaymentActions from '../store/Payment.slice';
-import {Payment} from "tnn-sdk";
-import {Key} from "antd/lib/table/interface";
 
 export default function usePayments() {
     const dispatch = useDispatch();
@@ -15,6 +15,11 @@ export default function usePayments() {
 
     const approvePaymentsInBatch = useCallback(
         (ids: number[]) => dispatch(PaymentActions.approvePaymentsInBatch(ids)),
+        [dispatch]
+    );
+
+    const deleteExistingPayment = useCallback(
+        (id: number) => dispatch(PaymentActions.deleteExistingPayment(id)),
         [dispatch]
     );
 
@@ -41,6 +46,7 @@ export default function usePayments() {
         fetchPayments,
         approvePaymentsInBatch,
         setQuery,
-        setSelected
+        setSelected,
+        deleteExistingPayment,
     };
 }

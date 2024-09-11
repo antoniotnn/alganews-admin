@@ -1,20 +1,14 @@
-import {
-    createAsyncThunk,
-    createSlice,
-    isFulfilled,
-    isPending,
-    isRejected,
-    PayloadAction,
-} from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Key } from 'antd/lib/table/interface';
 import { Payment, PaymentService } from 'tnn-sdk';
 import { RootState } from '.';
-import {Key} from "antd/lib/table/interface";
+import getThunkStatus from '../utils/getThunkStatus';
 
 interface PaymentState {
     paginated: Payment.Paginated;
     fetching: boolean;
     query: Payment.Query;
-    selected: Key[]
+    selected: Key[];
 }
 
 const initialState: PaymentState = {
@@ -23,11 +17,11 @@ const initialState: PaymentState = {
     query: {
         sort: ['scheduledTo', 'desc'],
         page: 0,
-        size: 2,
+        size: 7,
     },
     paginated: {
         page: 0,
-        size: 2,
+        size: 7,
         totalPages: 1,
         totalElements: 0,
         content: [],
@@ -49,6 +43,15 @@ export const approvePaymentsInBatch = createAsyncThunk(
     'payment/approvePaymentsInBatch',
     async (paymentIds: number[], { dispatch }) => {
         await PaymentService.approvePaymentsBatch(paymentIds);
+        await dispatch(getAllPayments());
+        await dispatch(storeSelectedKeys([]));
+    }
+);
+
+export const deleteExistingPayment = createAsyncThunk(
+    'payment/deleteExistingPayment',
+    async (paymentId: number, { dispatch }) => {
+        await PaymentService.removeExistingPayment(paymentId);
         await dispatch(getAllPayments());
         await dispatch(storeSelectedKeys([]));
     }
@@ -77,12 +80,14 @@ const PaymentSlice = createSlice({
         },
         storeSelectedKeys(state, action: PayloadAction<Key[]>) {
             state.selected = action.payload;
-        }
+        },
     },
     extraReducers(builder) {
-        const success = isFulfilled(getAllPayments, approvePaymentsInBatch);
-        const error = isRejected(getAllPayments, approvePaymentsInBatch);
-        const loading = isPending(getAllPayments, approvePaymentsInBatch);
+        const { success, error, loading } = getThunkStatus([
+            getAllPayments,
+            approvePaymentsInBatch,
+            deleteExistingPayment,
+        ]);
 
         builder
             .addMatcher(success, (state) => {
@@ -97,7 +102,8 @@ const PaymentSlice = createSlice({
     },
 });
 
-export const { storeQuery, storeList, storeSelectedKeys } = PaymentSlice.actions;
+export const { storeQuery, storeList, storeSelectedKeys } =
+    PaymentSlice.actions;
 
 const PaymentReducer = PaymentSlice.reducer;
 export default PaymentReducer;
