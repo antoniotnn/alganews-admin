@@ -6,9 +6,21 @@ import moment from "moment";
 import {DeleteOutlined, EyeOutlined, EditOutlined} from "@ant-design/icons";
 import transformIntoBrl from "../../core/utils/transformIntoBrl";
 import {DatePicker} from "antd";
+import {Key} from "antd/lib/table/interface";
 
-export default function EntriesList() {
-    const {entries, fetchingEntries, fetchEntries, setQuery, query} = useCashFlow('EXPENSE');
+interface EntriesListProps {
+    selected: Key[];
+    onSelect: (keys: Key[]) => any;
+}
+
+export default function EntriesList(props: EntriesListProps) {
+    const {
+        entries,
+        fetchingEntries,
+        fetchEntries,
+        setQuery,
+        query,
+    } = useCashFlow('EXPENSE');
 
     useEffect(() => {
         fetchEntries();
@@ -18,6 +30,14 @@ export default function EntriesList() {
         <Table<CashFlow.EntrySummary>
             dataSource={entries}
             loading={fetchingEntries}
+            rowKey={'id'}
+            rowSelection={{
+                selectedRowKeys: props.selected,
+                onChange: props.onSelect,
+                getCheckboxProps(record) {
+                    return !record.canBeDeleted ? {disabled: true} : {};
+                }
+            }}
             columns={[
                 {
                     dataIndex: 'description',

@@ -1,12 +1,14 @@
 import {useCallback, useState} from "react";
 import {CashFlow, CashFlowService} from "tnn-sdk";
 import moment from "moment";
+import {Key} from "antd/lib/table/interface";
 
 
 type CashFlowEntryType = CashFlow.EntrySummary['type'];
 
 export default function useCashFlow(type: CashFlowEntryType){
     const [entries, setEntries] = useState<CashFlow.EntrySummary[]>([]);
+    const [selected, setSelected] = useState<Key[]>([]);
     const [query, setQuery] = useState<CashFlow.Query>({
         type,
         sort: ['transactedOn', 'desc'],
@@ -27,9 +29,11 @@ export default function useCashFlow(type: CashFlowEntryType){
 
     return {
         entries,
+        query,
+        selected,
         fetchingEntries,
         fetchEntries,
-        query,
-        setQuery
+        setQuery,
+        setSelected
     };
 }
