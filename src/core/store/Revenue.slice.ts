@@ -92,5 +92,5 @@ export const {
     setFetching
 } = revenueSlice.actions;
 
-const RevenueReducer = revenueSlice.reducer;
-export default RevenueReducer;
+const revenueReducer = revenueSlice.reducer;
+export default revenueReducer;

@@ -105,5 +105,5 @@ const PaymentSlice = createSlice({
 export const { storeQuery, storeList, storeSelectedKeys } =
     PaymentSlice.actions;
 
-const PaymentReducer = PaymentSlice.reducer;
-export default PaymentReducer;
+const paymentReducer = PaymentSlice.reducer;
+export default paymentReducer;
