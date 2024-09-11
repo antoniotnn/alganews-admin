@@ -1,31 +1,34 @@
-import {Space, Table, Tag, Button} from "antd";
+import {Space, Table, Tag, Button, Card, Tooltip} from "antd";
 import {CashFlow} from "tnn-sdk";
 import useCashFlow from "../../core/hooks/useCashFlow";
 import {useEffect} from "react";
 import moment from "moment";
-import { DeleteOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
+import {DeleteOutlined, EyeOutlined, EditOutlined} from "@ant-design/icons";
 import transformIntoBrl from "../../core/utils/transformIntoBrl";
+import {DatePicker} from "antd";
 
 export default function EntriesList() {
-    const { entries, fetchingEntries, fetchEntries } = useCashFlow();
+    const {entries, fetchingEntries, fetchEntries, setQuery, query} = useCashFlow('EXPENSE');
 
     useEffect(() => {
-        fetchEntries({
-            type: 'EXPENSE',
-            sort: ['transactedOn', 'desc'],
-            yearMonth: '2024-08'
-        });
+        fetchEntries();
     }, [fetchEntries]);
-    
+
     return (
         <Table<CashFlow.EntrySummary>
             dataSource={entries}
+            loading={fetchingEntries}
             columns={[
                 {
                     dataIndex: 'description',
                     title: 'Descrição',
                     width: 300,
-                    ellipsis: true
+                    ellipsis: true,
+                    render(description: CashFlow.EntrySummary['description']) {
+                        return <Tooltip title={description}>
+                            {description}
+                        </Tooltip>
+                    }
                 },
                 {
                     dataIndex: 'category',
@@ -39,6 +42,20 @@ export default function EntriesList() {
                     dataIndex: 'transactedOn',
                     title: 'Data',
                     align: 'center',
+                    filterDropdown() {
+                        return <Card>
+                            <DatePicker.MonthPicker
+                                format={'YYYY - MMMM'}
+                                allowClear={false}
+                                onChange={
+                                    (date) => setQuery({
+                                        ...query,
+                                        yearMonth: date?.format('YYYY-MM') || moment().format('YYYY-MM')
+                                    })
+                                }
+                            />
+                        </Card>
+                    },
                     render(transactedOn: CashFlow.EntrySummary['transactedOn']) {
                         return moment(transactedOn).format('DD/MM/YYYY');
                     }
@@ -56,9 +73,9 @@ export default function EntriesList() {
                     render(id: number) {
                         return (
                             <Space>
-                                <Button type={'text'} size={'small'} icon={<DeleteOutlined />} danger />
-                                <Button type={'text'} size={'small'} icon={<EditOutlined />} />
-                                <Button type={'text'} size={'small'} icon={<EyeOutlined />} />
+                                <Button type={'text'} size={'small'} icon={<DeleteOutlined/>} danger/>
+                                <Button type={'text'} size={'small'} icon={<EditOutlined/>}/>
+                                <Button type={'text'} size={'small'} icon={<EyeOutlined/>}/>
                             </Space>
                         );
                     }
