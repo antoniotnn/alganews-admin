@@ -8,15 +8,18 @@ import {
 } from '@reduxjs/toolkit';
 import { Payment, PaymentService } from 'tnn-sdk';
 import { RootState } from '.';
+import {Key} from "antd/lib/table/interface";
 
 interface PaymentState {
     paginated: Payment.Paginated;
     fetching: boolean;
     query: Payment.Query;
+    selected: Key[]
 }
 
 const initialState: PaymentState = {
     fetching: false,
+    selected: [],
     query: {
         sort: ['scheduledTo', 'desc'],
         page: 0,
@@ -47,6 +50,7 @@ export const approvePaymentsInBatch = createAsyncThunk(
     async (paymentIds: number[], { dispatch }) => {
         await PaymentService.approvePaymentsBatch(paymentIds);
         await dispatch(getAllPayments());
+        await dispatch(storeSelectedKeys([]));
     }
 );
 
@@ -71,6 +75,9 @@ const PaymentSlice = createSlice({
                 ...action.payload,
             };
         },
+        storeSelectedKeys(state, action: PayloadAction<Key[]>) {
+            state.selected = action.payload;
+        }
     },
     extraReducers(builder) {
         const success = isFulfilled(getAllPayments, approvePaymentsInBatch);
@@ -90,7 +97,7 @@ const PaymentSlice = createSlice({
     },
 });
 
-export const { storeQuery, storeList } = PaymentSlice.actions;
+export const { storeQuery, storeList, storeSelectedKeys } = PaymentSlice.actions;
 
 const PaymentReducer = PaymentSlice.reducer;
 export default PaymentReducer;

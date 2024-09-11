@@ -2,6 +2,8 @@ import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
 import * as PaymentActions from '../store/Payment.slice';
+import {Payment} from "tnn-sdk";
+import {Key} from "antd/lib/table/interface";
 
 export default function usePayments() {
     const dispatch = useDispatch();
@@ -9,6 +11,7 @@ export default function usePayments() {
     const fetching = useSelector((s: RootState) => s.payment.fetching);
     const payments = useSelector((s: RootState) => s.payment.paginated);
     const query = useSelector((s: RootState) => s.payment.query);
+    const selected = useSelector((s: RootState) => s.payment.selected);
 
     const approvePaymentsInBatch = useCallback(
         (ids: number[]) => dispatch(PaymentActions.approvePaymentsInBatch(ids)),
@@ -21,7 +24,12 @@ export default function usePayments() {
     );
 
     const setQuery = useCallback(
-        (query) => dispatch(PaymentActions.setQuery(query)),
+        (query: Payment.Query) => dispatch(PaymentActions.setQuery(query)),
+        [dispatch]
+    );
+
+    const setSelected = useCallback(
+        (keys: Key[]) => dispatch(PaymentActions.storeSelectedKeys(keys)),
         [dispatch]
     );
 
@@ -29,8 +37,10 @@ export default function usePayments() {
         payments,
         fetching,
         query,
+        selected,
         fetchPayments,
         approvePaymentsInBatch,
         setQuery,
+        setSelected
     };
 }
