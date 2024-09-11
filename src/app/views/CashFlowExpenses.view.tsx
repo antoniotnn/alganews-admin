@@ -7,7 +7,7 @@ import DoubleConfirm from "../components/DoubleConfirm";
 const { Title, Text } = Typography;
 
 export default function CashFlowExpensesView() {
-    const { selected, setSelected, deleteEntriesInBatch } = useCashFlow('EXPENSE');
+    const { selected, removeEntries } = useCashFlow('EXPENSE');
 
     return <>
         <Row>
@@ -18,7 +18,7 @@ export default function CashFlowExpensesView() {
                 modalTitle={'Remover entradas'}
                 modalContent={'Remover uma ou mais entradas pode gerar impacto negativo no gráfico de receitas e despesas da empresa. Esta é uma ação irreversível.'}
                 onConfirm={async () => {
-                    await deleteEntriesInBatch(selected as number[]);
+                    await removeEntries(selected as number[]);
                 }}
             >
                 <Button type={'primary'} disabled={!selected.length}>
@@ -38,6 +38,6 @@ export default function CashFlowExpensesView() {
 
         <Divider />
 
-        <EntriesList selected={selected} onSelect={setSelected}/>
+        <EntriesList />
     </>
 }

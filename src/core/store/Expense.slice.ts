@@ -26,7 +26,7 @@ const initialState: ExpenseState = {
 export const getExpenses = createAsyncThunk(
     'cash-flow/expenses/getExpenses',
     async (_, {getState, dispatch}) => {
-        const {query} = (getState() as RootState).expense;
+        const {query} = (getState() as RootState).cashFlow.expense;
         const expenses = await CashFlowService.getAllEntries(query);
         await dispatch(storeList(expenses));
     }
@@ -40,6 +40,15 @@ export const removeEntriesInBatch = createAsyncThunk(
     }
 );
 
+export const setQuery = createAsyncThunk(
+    'cash-flow/expenses/setQuery',
+    async (query: Partial<CashFlow.Query>, {dispatch}) => {
+        await dispatch(_setQuery(query));
+        await dispatch(getExpenses());
+    }
+);
+
+
 const expenseSlice = createSlice({
     initialState,
     name: 'cash-flow/expenses',
@@ -47,7 +56,7 @@ const expenseSlice = createSlice({
         storeList(state, action: PayloadAction<CashFlow.EntrySummary[]>) {
             state.list = action.payload;
         },
-        setSelectExpenses(state, action: PayloadAction<Key[]>) {
+        setSelectedExpenses(state, action: PayloadAction<Key[]>) {
             state.selected = action.payload;
         },
         setQuery(state, action: PayloadAction<Partial<CashFlow.Query>>) {
@@ -78,8 +87,8 @@ const expenseSlice = createSlice({
 
 export const {
     storeList,
-    setSelectExpenses,
-    setQuery,
+    setSelectedExpenses,
+    setQuery: _setQuery,
     setFetching
 } = expenseSlice.actions;
 

@@ -1,25 +1,22 @@
-import {Space, Table, Tag, Button, Card, Tooltip} from "antd";
+import {Button, Card, DatePicker, Space, Table, Tag, Tooltip} from "antd";
 import {CashFlow} from "tnn-sdk";
 import useCashFlow from "../../core/hooks/useCashFlow";
 import {useEffect} from "react";
 import moment from "moment";
-import {DeleteOutlined, EyeOutlined, EditOutlined} from "@ant-design/icons";
+import {DeleteOutlined, EditOutlined, EyeOutlined} from "@ant-design/icons";
 import transformIntoBrl from "../../core/utils/transformIntoBrl";
-import {DatePicker} from "antd";
-import {Key} from "antd/lib/table/interface";
 
-interface EntriesListProps {
-    selected: Key[];
-    onSelect: (keys: Key[]) => any;
-}
+interface EntriesListProps {}
 
 export default function EntriesList(props: EntriesListProps) {
     const {
         entries,
-        fetchingEntries,
+        fetching,
         fetchEntries,
         setQuery,
         query,
+        selected,
+        setSelected
     } = useCashFlow('EXPENSE');
 
     useEffect(() => {
@@ -29,11 +26,11 @@ export default function EntriesList(props: EntriesListProps) {
     return (
         <Table<CashFlow.EntrySummary>
             dataSource={entries}
-            loading={fetchingEntries}
+            loading={fetching}
             rowKey={'id'}
             rowSelection={{
-                selectedRowKeys: props.selected,
-                onChange: props.onSelect,
+                selectedRowKeys: selected,
+                onChange: setSelected,
                 getCheckboxProps(record) {
                     return !record.canBeDeleted ? {disabled: true} : {};
                 }
