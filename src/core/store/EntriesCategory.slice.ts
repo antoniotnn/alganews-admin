@@ -1,5 +1,6 @@
-import {CashFlow, CashFlowService} from "tnn-sdk";
-import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { CashFlow, CashFlowService } from 'tnn-sdk';
+import getThunkStatus from '../utils/getThunkStatus';
 
 interface EntriesCategoryState {
     fetching: boolean;
@@ -17,7 +18,7 @@ export const getCategories = createAsyncThunk(
     'cash-flow/categories/getCategories',
     async (_, { dispatch }) => {
         const categories = await CashFlowService.getAllCategories({
-            sort: ['id', 'asc']
+            sort: ['id', 'desc'],
         });
 
         /**
@@ -26,8 +27,8 @@ export const getCategories = createAsyncThunk(
          *
          * @todo: melhorar isso assim que a API prover um endpoint
          */
-        const expensesCategories = categories.filter(c => c.type === 'EXPENSE');
-        const revenuesCategories = categories.filter(c => c.type === 'REVENUE');
+        const expensesCategories = categories.filter((c) => c.type === 'EXPENSE');
+        const revenuesCategories = categories.filter((c) => c.type === 'REVENUE');
 
         await dispatch(storeExpenses(expensesCategories));
         await dispatch(storeRevenues(revenuesCategories));
@@ -50,25 +51,42 @@ export const deleteCategory = createAsyncThunk(
     }
 );
 
-export const entriesCategorySlice = createSlice({
+const entriesCategorySlice = createSlice({
     initialState,
     name: 'cash-flow/categories',
     reducers: {
-        storeExpenses: (state, action: PayloadAction<CashFlow.CategorySummary[]>) => {
+        storeExpenses(state, action: PayloadAction<CashFlow.CategorySummary[]>) {
             state.expenses = action.payload;
         },
-        storeRevenues: (state, action: PayloadAction<CashFlow.CategorySummary[]>) => {
+        storeRevenues(state, action: PayloadAction<CashFlow.CategorySummary[]>) {
             state.revenues = action.payload;
         },
-        storeFetching: (state, action: PayloadAction<boolean>) => {
+        storeFetching(state, action: PayloadAction<boolean>) {
             state.fetching = action.payload;
         },
     },
+    extraReducers(builder) {
+        const { error, loading, success } = getThunkStatus([
+            getCategories,
+            createCategory,
+            deleteCategory,
+        ]);
+
+        builder
+            .addMatcher(error, (state) => {
+                state.fetching = false;
+            })
+            .addMatcher(success, (state) => {
+                state.fetching = false;
+            })
+            .addMatcher(loading, (state) => {
+                state.fetching = true;
+            });
+    },
 });
 
-export const {storeExpenses, storeRevenues, storeFetching}
-    = entriesCategorySlice.actions;
+export const { storeExpenses, storeFetching, storeRevenues } =
+    entriesCategorySlice.actions;
 
 const entriesCategoryReducer = entriesCategorySlice.reducer;
 export default entriesCategoryReducer;
-
