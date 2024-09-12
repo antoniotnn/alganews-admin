@@ -1,11 +1,11 @@
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../store";
+import {AppDispatch, RootState} from "../store";
 import {useCallback} from "react";
 import * as CategoryActions from "../store/EntriesCategory.slice";
 import {CashFlow} from "tnn-sdk";
 
 export default function useEntriesCategories() {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
     const expenses = useSelector((s: RootState) => s.cashFlow.category.expenses);
     const revenues = useSelector((s: RootState) => s.cashFlow.category.revenues);
 
@@ -14,8 +14,10 @@ export default function useEntriesCategories() {
         [dispatch]
     );
 
+
     const createCategory = useCallback(
-        (category: CashFlow.CategoryInput) => dispatch(CategoryActions.createCategory(category)),
+        (category: CashFlow.CategoryInput) =>
+            (dispatch(CategoryActions.createCategory(category))).unwrap(),
         [dispatch]
     );
 
