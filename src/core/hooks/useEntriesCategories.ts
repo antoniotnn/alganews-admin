@@ -2,6 +2,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../store";
 import {useCallback} from "react";
 import * as CategoryActions from "../store/EntriesCategory.slice";
+import {CashFlow} from "tnn-sdk";
 
 export default function useEntriesCategories() {
     const dispatch = useDispatch();
@@ -13,9 +14,16 @@ export default function useEntriesCategories() {
         [dispatch]
     );
 
+    const createCategory = useCallback(
+        (category: CashFlow.CategoryInput) => dispatch(CategoryActions.createCategory(category)),
+        [dispatch]
+    );
+
+
     return {
         expenses,
         revenues,
-        fetchCategories
+        fetchCategories,
+        createCategory
     };
 }

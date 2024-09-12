@@ -1,4 +1,4 @@
-import {Button, Col, Form, Input, Modal, Row, Table} from "antd";
+import {Button, Col, Form, Input, Modal, notification, Row, Table} from "antd";
 import {CashFlow} from "tnn-sdk";
 import useEntriesCategories from "../../core/hooks/useEntriesCategories";
 import {useCallback, useEffect, useState} from "react";
@@ -26,8 +26,14 @@ export default function EntryCategoryManager(props: {
                 title={'Adicionar categoria'}
                 visible={showCreationModal}
                 onCancel={closeCreationModal}
+                destroyOnClose
             >
-                <CategoryForm />
+                <CategoryForm
+                    onSuccess={() => {
+                        closeCreationModal();
+                        notification.success({ message: 'Categoria cadastrada com sucesso' });
+                    }}
+                />
             </Modal>
             <Row justify={'space-between'} style={{ marginBottom: 16}}>
                 <Button>Atualizar categorias</Button>
@@ -69,25 +75,43 @@ export default function EntryCategoryManager(props: {
     );
 }
 
-function CategoryForm() {
-    return <Form layout={'vertical'}>
-        <Row justify={'end'}>
-            <Col xs={24}>
-                <Form.Item
-                    name={'name'}
-                    label={'Categoria'}
-                    rules={[
-                    {
-                        required: true,
-                        message: 'O nome da categoria é obrigatório'
-                    }
-                ]}>
-                    <Input placeholder={'Eg.: Infra'} />
-                </Form.Item>
-            </Col>
-            <Button type={'primary'} htmlType={'submit'} icon={<CheckCircleOutlined />}>
-                Cadastrar categoria
-            </Button>
-        </Row>
-    </Form>
+function CategoryForm(props: {
+    onSuccess: () => any
+}) {
+    const { onSuccess } = props;
+    const { createCategory } = useEntriesCategories();
+
+    const handleFormSubmit = useCallback(async (form: CashFlow.CategoryInput) => {
+        const newCategoryDTO: CashFlow.CategoryInput = {
+            ...form,
+            type: 'EXPENSE'
+        };
+
+        await createCategory(newCategoryDTO);
+        onSuccess();
+    }, [createCategory, onSuccess]);
+
+    return (
+        <Form layout={'vertical'} onFinish={handleFormSubmit}>
+            <Row justify={'end'}>
+                <Col xs={24}>
+                    <Form.Item
+                        name={'name'}
+                        label={'Categoria'}
+                        rules={[
+                            {
+                                required: true,
+                                message: 'O nome da categoria é obrigatório'
+                            }
+                        ]}>
+                        <Input placeholder={'Eg.: Infra'} />
+                    </Form.Item>
+                </Col>
+                <Button type={'primary'} htmlType={'submit'} icon={<CheckCircleOutlined />}>
+                    Cadastrar categoria
+                </Button>
+            </Row>
+        </Form>
+    );
+
 }
