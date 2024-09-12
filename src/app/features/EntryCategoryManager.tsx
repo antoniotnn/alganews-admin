@@ -1,4 +1,4 @@
-import {Button, Col, Form, Input, Modal, notification, Row, Table} from "antd";
+import {Button, Col, Form, Input, Modal, notification, Popconfirm, Row, Table} from "antd";
 import {CashFlow} from "tnn-sdk";
 import useEntriesCategories from "../../core/hooks/useEntriesCategories";
 import {useCallback, useEffect, useState} from "react";
@@ -7,7 +7,7 @@ import {CheckCircleOutlined, DeleteOutlined} from "@ant-design/icons";
 export default function EntryCategoryManager(props: {
     type: 'EXPENSE' | 'REVENUE'
 }) {
-    const {expenses, fetchCategories, revenues} = useEntriesCategories();
+    const {expenses, fetchCategories, revenues, deleteCategory} = useEntriesCategories();
 
     const [showCreationModal, setShowCreationModal] = useState(false);
 
@@ -41,6 +41,7 @@ export default function EntryCategoryManager(props: {
             </Row>
             <Table<CashFlow.CategorySummary>
                 size={'small'}
+                rowKey={'id'}
                 dataSource={props.type === 'EXPENSE' ? expenses : revenues}
                 columns={[
                     {
@@ -56,15 +57,23 @@ export default function EntryCategoryManager(props: {
                         dataIndex: 'id',
                         title: 'Ações',
                         align: 'right',
-                        render: (id: number) => (
-                            <>
+                        render: (id: number, record) => (
+                            <Popconfirm
+                                title={'Remover categoria?'}
+                                disabled={!record.canBeDeleted}
+                                onConfirm={async () => {
+                                    await deleteCategory(id);
+                                    notification.success({ message: 'Categoria removida com sucesso' });
+                                }}
+                            >
                                 <Button
                                     danger
                                     type={'ghost'}
                                     size={'small'}
                                     icon={<DeleteOutlined/>}
+                                    disabled={!record.canBeDeleted}
                                 />
-                            </>
+                            </Popconfirm>
                         )
                     }
                 ]}

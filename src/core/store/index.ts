@@ -9,7 +9,11 @@ import entriesCategoryReducer from "./EntriesCategory.slice";
 
 const observeActions: Middleware = () => (next) => (action) => {
     if (isRejected(action)) {
-        const ignoredActions = ['cash-flow/categories/createCategory/rejected'];
+        // necessário por conta do unwrap do dispatch
+        const ignoredActions = [
+            'cash-flow/categories/createCategory/rejected',
+            'cash-flow/categories/deleteCategory/rejected',
+        ];
 
         const shouldNotify = !ignoredActions.includes(action.type);
 
