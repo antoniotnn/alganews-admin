@@ -1,9 +1,10 @@
-import {Button, Col, DatePicker, Divider, Form, Input, Row, Space} from "antd";
+import {Button, Col, DatePicker, Divider, Form, Input, Row, Select, Space} from "antd";
 import CurrencyInput from "../components/CurrencyInput";
-import {useCallback} from "react";
+import {useCallback, useEffect} from "react";
 import {CashFlow} from "tnn-sdk";
 import {Moment} from "moment";
 import {useForm} from "antd/lib/form/Form";
+import useEntriesCategories from "../../core/hooks/useEntriesCategories";
 
 type EntryFormSubmit = Omit<CashFlow.EntryInput, 'transactedOn'> & {
     transactedOn: Moment;
@@ -12,10 +13,15 @@ type EntryFormSubmit = Omit<CashFlow.EntryInput, 'transactedOn'> & {
 
 export default function EntryForm() {
     const [form] = useForm();
+    const { revenues, expenses, fetching, fetchCategories} = useEntriesCategories();
 
     const handleFormSubmit = useCallback((form: EntryFormSubmit) => {
         console.log(form);
     }, []);
+
+    useEffect(() => {
+        fetchCategories();
+    }, [fetchCategories]);
 
     return (
         <Form form={form} layout={'vertical'} onFinish={handleFormSubmit}>
@@ -35,7 +41,15 @@ export default function EntryForm() {
                         name={['category', 'id']}
                         rules={[{ required: true, message: 'Campo obrigatório' }]}
                     >
-                        <Input placeholder={'Pagamento da AWS'} />
+                        <Select loading={fetching} placeholder={'Selecione uma categoria'}>
+                            {
+                                expenses.map(category => (
+                                    <Select.Option key={category.id} value={category.id}>
+                                        {category.name}
+                                    </Select.Option>
+                                ))
+                            }
+                        </Select>
                     </Form.Item>
                 </Col>
                 <Col xs={24} lg={12}>
@@ -45,6 +59,7 @@ export default function EntryForm() {
                         rules={[{ required: true, message: 'Campo obrigatório' }]}
                     >
                         <CurrencyInput
+                            defaultValue={'R$ 0,00'}
                             onChange={(_, value) => {
                                 form.setFieldsValue({amount: value})
                             }}
