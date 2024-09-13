@@ -1,16 +1,15 @@
-import {CashFlow, CashFlowService} from "tnn-sdk";
-import {Key} from "antd/lib/table/interface";
-import moment from "moment";
-import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {RootState} from "./index";
-import getThunkStatus from "../utils/getThunkStatus";
-import {getRevenues} from "./Revenue.slice";
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Key } from 'antd/lib/table/interface';
+import { CashFlow, CashFlowService } from 'tnn-sdk';
+import moment from 'moment';
+import { RootState } from '.';
+import getThunkStatus from '../utils/getThunkStatus';
 
 interface ExpenseState {
     list: CashFlow.EntrySummary[];
     fetching: boolean;
     query: CashFlow.Query;
-    selected: Key[]
+    selected: Key[];
 }
 
 const initialState: ExpenseState = {
@@ -19,31 +18,35 @@ const initialState: ExpenseState = {
     query: {
         type: 'EXPENSE',
         sort: ['transactedOn', 'desc'],
-        yearMonth: moment().format('YYYY-MM')
+        yearMonth: moment().format('YYYY-MM'),
     },
-    selected: []
+    selected: [],
 };
 
 export const getExpenses = createAsyncThunk(
     'cash-flow/expenses/getExpenses',
-    async (_, {getState, dispatch}) => {
-        const {query} = (getState() as RootState).cashFlow.expense;
+    async (_, { getState, dispatch }) => {
+        const { query } = (getState() as RootState).cashFlow.expense;
         const expenses = await CashFlowService.getAllEntries(query);
         await dispatch(storeList(expenses));
     }
 );
 
 export const createExpense = createAsyncThunk(
-    'cash-flow/revenues/createExpenses',
-    async (expense: CashFlow.EntryInput, {dispatch}) => {
-        await CashFlowService.insertNewEntry(expense);
-        await dispatch(getExpenses());
+    'cash-flow/expenses/createExpense',
+    async (expense: CashFlow.EntryInput, { dispatch, rejectWithValue }) => {
+        try {
+            await CashFlowService.insertNewEntry(expense);
+            await dispatch(getExpenses());
+        } catch (err: any) {
+            return rejectWithValue({ ...err });
+        }
     }
 );
 
 export const removeEntriesInBatch = createAsyncThunk(
     'cash-flow/expenses/removeEntriesInBatch',
-    async (ids: number[], {dispatch}) => {
+    async (ids: number[], { dispatch }) => {
         await CashFlowService.removeEntriesBatch(ids);
         await dispatch(getExpenses());
     }
@@ -51,12 +54,11 @@ export const removeEntriesInBatch = createAsyncThunk(
 
 export const setQuery = createAsyncThunk(
     'cash-flow/expenses/setQuery',
-    async (query: Partial<CashFlow.Query>, {dispatch}) => {
+    async (query: Partial<CashFlow.Query>, { dispatch }) => {
         await dispatch(_setQuery(query));
         await dispatch(getExpenses());
     }
 );
-
 
 const expenseSlice = createSlice({
     initialState,
@@ -71,34 +73,38 @@ const expenseSlice = createSlice({
         setQuery(state, action: PayloadAction<Partial<CashFlow.Query>>) {
             state.query = {
                 ...state.query,
-                ...action.payload
+                ...action.payload,
             };
         },
         setFetching(state, action: PayloadAction<boolean>) {
             state.fetching = action.payload;
-        }
+        },
     },
     extraReducers(builder) {
-        const {error, loading, success} = getThunkStatus([getExpenses, removeEntriesInBatch, createExpense]);
+        const { error, loading, success } = getThunkStatus([
+            getExpenses,
+            removeEntriesInBatch,
+            createExpense,
+        ]);
 
         builder
             .addMatcher(error, (state) => {
                 state.fetching = false;
             })
             .addMatcher(success, (state) => {
-                state.fetching = false
+                state.fetching = false;
             })
             .addMatcher(loading, (state) => {
                 state.fetching = true;
             });
-    }
+    },
 });
 
 export const {
     storeList,
     setSelectedExpenses,
     setQuery: _setQuery,
-    setFetching
+    setFetching,
 } = expenseSlice.actions;
 
 const expenseReducer = expenseSlice.reducer;

@@ -1,5 +1,17 @@
-import {Button, Divider, notification, Row, Space, Tooltip, Typography} from 'antd';
-import { InfoCircleFilled, TagOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import {
+    Button,
+    Divider,
+    notification,
+    Row,
+    Space,
+    Tooltip,
+    Typography,
+} from 'antd';
+import {
+    InfoCircleFilled,
+    TagOutlined,
+    PlusCircleOutlined,
+} from '@ant-design/icons';
 import EntriesList from '../features/EntriesList';
 import useCashFlow from '../../core/hooks/useCashFlow';
 import DoubleConfirm from '../components/DoubleConfirm';
@@ -7,7 +19,7 @@ import Modal from 'antd/lib/modal/Modal';
 import { useState } from 'react';
 import { useCallback } from 'react';
 import EntryCategoryManager from '../features/EntryCategoryManager';
-import EntryForm from "../features/EntryForm";
+import EntryForm from '../features/EntryForm';
 const { Title, Text } = Typography;
 
 export default function CashFlowExpensesView() {
@@ -47,7 +59,7 @@ export default function CashFlowExpensesView() {
                     onSuccess={() => {
                         closeFormModal();
                         notification.success({
-                            message: 'Entrada cadastrada com sucesso'
+                            message: 'Entrada cadastrada com sucesso',
                         });
                     }}
                 />

@@ -1,11 +1,23 @@
-import {Button, Col, DatePicker, Divider, Form, Input, Row, Select, Space} from "antd";
-import CurrencyInput from "../components/CurrencyInput";
-import {useCallback, useEffect, useMemo} from "react";
-import {CashFlow} from "tnn-sdk";
-import {Moment} from "moment";
-import {useForm} from "antd/lib/form/Form";
-import useEntriesCategories from "../../core/hooks/useEntriesCategories";
-import useCashFlow from "../../core/hooks/useCashFlow";
+import {
+    Col,
+    Row,
+    Form,
+    Input,
+    DatePicker,
+    Divider,
+    Space,
+    Button,
+    Select,
+} from 'antd';
+import { CashFlow } from 'tnn-sdk';
+import { useCallback } from 'react';
+import { Moment } from 'moment';
+import CurrencyInput from '../components/CurrencyInput';
+import { useForm } from 'antd/lib/form/Form';
+import useEntriesCategories from '../../core/hooks/useEntriesCategories';
+import { useEffect } from 'react';
+import { useMemo } from 'react';
+import useCashFlow from '../../core/hooks/useCashFlow';
 
 type EntryFormSubmit = Omit<CashFlow.EntryInput, 'transactedOn'> & {
     transactedOn: Moment;
@@ -16,23 +28,12 @@ interface EntryFormProps {
     onSuccess: () => any;
 }
 
-
 export default function EntryForm({ type, onSuccess }: EntryFormProps) {
     const [form] = useForm();
-    const { revenues, expenses, fetching, fetchCategories} = useEntriesCategories();
+    const { revenues, expenses, fetching, fetchCategories } =
+        useEntriesCategories();
 
-    const { createEntry, fetching: fetchingEntries} = useCashFlow(type);
-
-    const handleFormSubmit = useCallback(async (form: EntryFormSubmit) => {
-        const newEntryDTO: CashFlow.EntryInput = {
-            ...form,
-            transactedOn: form.transactedOn.format('YYYY-MM-DD'),
-            type
-        }
-
-        await createEntry(newEntryDTO);
-        onSuccess();
-    }, [createEntry, onSuccess, type]);
+    const { createEntry, fetching: fetchingEntries } = useCashFlow(type);
 
     useEffect(() => {
         fetchCategories();
@@ -43,10 +44,25 @@ export default function EntryForm({ type, onSuccess }: EntryFormProps) {
         [expenses, revenues, type]
     );
 
+    const handleFormSubmit = useCallback(
+        async (form: EntryFormSubmit) => {
+            const newEntryDTO: CashFlow.EntryInput = {
+                ...form,
+                transactedOn: form.transactedOn.format('YYYY-MM-DD'),
+                type,
+            };
+
+            await createEntry(newEntryDTO);
+            onSuccess();
+        },
+        [type, createEntry, onSuccess]
+    );
+
     return (
         <Form
             autoComplete={'off'}
-            form={form} layout={'vertical'}
+            form={form}
+            layout={'vertical'}
             onFinish={handleFormSubmit}
         >
             <Row gutter={16}>
@@ -66,13 +82,11 @@ export default function EntryForm({ type, onSuccess }: EntryFormProps) {
                         rules={[{ required: true, message: 'Campo obrigatório' }]}
                     >
                         <Select loading={fetching} placeholder={'Selecione uma categoria'}>
-                            {
-                                categories.map(category => (
-                                    <Select.Option key={category.id} value={category.id}>
-                                        {category.name}
-                                    </Select.Option>
-                                ))
-                            }
+                            {categories.map((category) => (
+                                <Select.Option key={category.id} value={category.id}>
+                                    {category.name}
+                                </Select.Option>
+                            ))}
                         </Select>
                     </Form.Item>
                 </Col>
@@ -84,9 +98,11 @@ export default function EntryForm({ type, onSuccess }: EntryFormProps) {
                     >
                         <CurrencyInput
                             defaultValue={'R$ 0,00'}
-                            onChange={(_, value) => {
-                                form.setFieldsValue({amount: value})
-                            }}
+                            onChange={(_, value) =>
+                                form.setFieldsValue({
+                                    amount: value,
+                                })
+                            }
                         />
                     </Form.Item>
                 </Col>
@@ -96,18 +112,19 @@ export default function EntryForm({ type, onSuccess }: EntryFormProps) {
                         name={'transactedOn'}
                         rules={[{ required: true, message: 'Campo obrigatório' }]}
                     >
-                        <DatePicker
-                            style={{ width: '100%' }}
-                            format={'DD/MM/YYYY'}
-                        />
+                        <DatePicker format={'DD/MM/YYYY'} style={{ width: '100%' }} />
                     </Form.Item>
                 </Col>
             </Row>
-            <Divider style={{marginTop: 0}}/>
+            <Divider style={{ marginTop: 0 }} />
             <Row justify={'end'}>
                 <Space>
                     <Button>Cancelar</Button>
-                    <Button loading={fetchingEntries} type={'primary'} htmlType={'submit'}>
+                    <Button
+                        loading={fetchingEntries}
+                        type={'primary'}
+                        htmlType={'submit'}
+                    >
                         Cadastrar despesa
                     </Button>
                 </Space>
