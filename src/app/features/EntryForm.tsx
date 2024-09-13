@@ -1,6 +1,6 @@
 import {Button, Col, DatePicker, Divider, Form, Input, Row, Select, Space} from "antd";
 import CurrencyInput from "../components/CurrencyInput";
-import {useCallback, useEffect} from "react";
+import {useCallback, useEffect, useMemo} from "react";
 import {CashFlow} from "tnn-sdk";
 import {Moment} from "moment";
 import {useForm} from "antd/lib/form/Form";
@@ -10,21 +10,40 @@ type EntryFormSubmit = Omit<CashFlow.EntryInput, 'transactedOn'> & {
     transactedOn: Moment;
 };
 
+interface EntryFormProps {
+    type: 'EXPENSE' | 'REVENUE';
+}
 
-export default function EntryForm() {
+
+export default function EntryForm({ type }: EntryFormProps) {
     const [form] = useForm();
     const { revenues, expenses, fetching, fetchCategories} = useEntriesCategories();
 
     const handleFormSubmit = useCallback((form: EntryFormSubmit) => {
-        console.log(form);
-    }, []);
+        const newEntryDTO: CashFlow.EntryInput = {
+            ...form,
+            transactedOn: form.transactedOn.format('DD-MM-YYYY'),
+            type
+        }
+
+        console.log(newEntryDTO);
+    }, [type]);
 
     useEffect(() => {
         fetchCategories();
     }, [fetchCategories]);
 
+    const categories = useMemo(
+        () => (type === 'EXPENSE' ? expenses : revenues),
+        [expenses, revenues, type]
+    );
+
     return (
-        <Form form={form} layout={'vertical'} onFinish={handleFormSubmit}>
+        <Form
+            autoComplete={'off'}
+            form={form} layout={'vertical'}
+            onFinish={handleFormSubmit}
+        >
             <Row gutter={16}>
                 <Col xs={24}>
                     <Form.Item
@@ -43,7 +62,7 @@ export default function EntryForm() {
                     >
                         <Select loading={fetching} placeholder={'Selecione uma categoria'}>
                             {
-                                expenses.map(category => (
+                                categories.map(category => (
                                     <Select.Option key={category.id} value={category.id}>
                                         {category.name}
                                     </Select.Option>
