@@ -6,7 +6,9 @@ import moment from "moment";
 import {DeleteOutlined, EditOutlined, EyeOutlined} from "@ant-design/icons";
 import transformIntoBrl from "../../core/utils/transformIntoBrl";
 
-interface EntriesListProps {}
+interface EntriesListProps {
+    onEdit: (entryId: number) => any;
+}
 
 export default function EntriesList(props: EntriesListProps) {
     const {
@@ -84,14 +86,24 @@ export default function EntriesList(props: EntriesListProps) {
                     render: transformIntoBrl
                 },
                 {
-                    dataIndex: 'amount',
+                    dataIndex: 'id',
                     title: 'Ações',
                     align: 'center',
                     render(id: number) {
                         return (
                             <Space>
-                                <Button type={'text'} size={'small'} icon={<DeleteOutlined/>} danger/>
-                                <Button type={'text'} size={'small'} icon={<EditOutlined/>}/>
+                                <Button
+                                    type={'text'}
+                                    size={'small'}
+                                    icon={<DeleteOutlined/>}
+                                    danger
+                                />
+                                <Button
+                                    type={'text'}
+                                    size={'small'}
+                                    icon={<EditOutlined/>}
+                                    onClick={() => props.onEdit(id)}
+                                />
                                 <Button type={'text'} size={'small'} icon={<EyeOutlined/>}/>
                             </Space>
                         );
