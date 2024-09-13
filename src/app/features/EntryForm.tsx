@@ -11,7 +11,7 @@ import {
 } from 'antd';
 import { CashFlow } from 'tnn-sdk';
 import { useCallback } from 'react';
-import { Moment } from 'moment';
+import moment, { Moment } from 'moment';
 import CurrencyInput from '../components/CurrencyInput';
 import { useForm } from 'antd/lib/form/Form';
 import useEntriesCategories from '../../core/hooks/useEntriesCategories';
@@ -112,7 +112,11 @@ export default function EntryForm({ type, onSuccess }: EntryFormProps) {
                         name={'transactedOn'}
                         rules={[{ required: true, message: 'Campo obrigatório' }]}
                     >
-                        <DatePicker format={'DD/MM/YYYY'} style={{ width: '100%' }} />
+                        <DatePicker
+                            format={'DD/MM/YYYY'}
+                            style={{ width: '100%' }}
+                            disabledDate={(date) => date.isAfter(moment())}
+                        />
                     </Form.Item>
                 </Col>
             </Row>
