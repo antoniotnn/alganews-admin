@@ -1,4 +1,4 @@
-import { Button, Divider, Row, Space, Tooltip, Typography } from 'antd';
+import {Button, Divider, notification, Row, Space, Tooltip, Typography} from 'antd';
 import { InfoCircleFilled, TagOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import EntriesList from '../features/EntriesList';
 import useCashFlow from '../../core/hooks/useCashFlow';
@@ -42,7 +42,15 @@ export default function CashFlowExpensesView() {
                 title={'Cadastrar despesa'}
                 destroyOnClose
             >
-                <EntryForm  type={'EXPENSE'}/>
+                <EntryForm
+                    type={'EXPENSE'}
+                    onSuccess={() => {
+                        closeFormModal();
+                        notification.success({
+                            message: 'Entrada cadastrada com sucesso'
+                        });
+                    }}
+                />
             </Modal>
             <Row justify={'space-between'} style={{ marginBottom: 16 }}>
                 <DoubleConfirm

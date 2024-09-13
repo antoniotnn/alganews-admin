@@ -4,6 +4,7 @@ import moment from "moment";
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {RootState} from "./index";
 import getThunkStatus from "../utils/getThunkStatus";
+import {getRevenues} from "./Revenue.slice";
 
 interface ExpenseState {
     list: CashFlow.EntrySummary[];
@@ -29,6 +30,14 @@ export const getExpenses = createAsyncThunk(
         const {query} = (getState() as RootState).cashFlow.expense;
         const expenses = await CashFlowService.getAllEntries(query);
         await dispatch(storeList(expenses));
+    }
+);
+
+export const createExpense = createAsyncThunk(
+    'cash-flow/revenues/createExpenses',
+    async (expense: CashFlow.EntryInput, {dispatch}) => {
+        await CashFlowService.insertNewEntry(expense);
+        await dispatch(getExpenses());
     }
 );
 
@@ -70,7 +79,7 @@ const expenseSlice = createSlice({
         }
     },
     extraReducers(builder) {
-        const {error, loading, success} = getThunkStatus([getExpenses, removeEntriesInBatch]);
+        const {error, loading, success} = getThunkStatus([getExpenses, removeEntriesInBatch, createExpense]);
 
         builder
             .addMatcher(error, (state) => {

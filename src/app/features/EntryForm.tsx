@@ -5,6 +5,7 @@ import {CashFlow} from "tnn-sdk";
 import {Moment} from "moment";
 import {useForm} from "antd/lib/form/Form";
 import useEntriesCategories from "../../core/hooks/useEntriesCategories";
+import useCashFlow from "../../core/hooks/useCashFlow";
 
 type EntryFormSubmit = Omit<CashFlow.EntryInput, 'transactedOn'> & {
     transactedOn: Moment;
@@ -12,22 +13,26 @@ type EntryFormSubmit = Omit<CashFlow.EntryInput, 'transactedOn'> & {
 
 interface EntryFormProps {
     type: 'EXPENSE' | 'REVENUE';
+    onSuccess: () => any;
 }
 
 
-export default function EntryForm({ type }: EntryFormProps) {
+export default function EntryForm({ type, onSuccess }: EntryFormProps) {
     const [form] = useForm();
     const { revenues, expenses, fetching, fetchCategories} = useEntriesCategories();
 
-    const handleFormSubmit = useCallback((form: EntryFormSubmit) => {
+    const { createEntry, fetching: fetchingEntries} = useCashFlow(type);
+
+    const handleFormSubmit = useCallback(async (form: EntryFormSubmit) => {
         const newEntryDTO: CashFlow.EntryInput = {
             ...form,
-            transactedOn: form.transactedOn.format('DD-MM-YYYY'),
+            transactedOn: form.transactedOn.format('YYYY-MM-DD'),
             type
         }
 
-        console.log(newEntryDTO);
-    }, [type]);
+        await createEntry(newEntryDTO);
+        onSuccess();
+    }, [createEntry, onSuccess, type]);
 
     useEffect(() => {
         fetchCategories();
@@ -102,7 +107,7 @@ export default function EntryForm({ type }: EntryFormProps) {
             <Row justify={'end'}>
                 <Space>
                     <Button>Cancelar</Button>
-                    <Button type={'primary'} htmlType={'submit'}>
+                    <Button loading={fetchingEntries} type={'primary'} htmlType={'submit'}>
                         Cadastrar despesa
                     </Button>
                 </Space>
