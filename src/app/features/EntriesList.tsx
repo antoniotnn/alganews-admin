@@ -1,11 +1,12 @@
 import {Button, Card, DatePicker, Space, Table, Tag, Tooltip} from "antd";
 import {CashFlow} from "tnn-sdk";
 import useCashFlow from "../../core/hooks/useCashFlow";
-import {useEffect} from "react";
+import {useEffect, useRef} from "react";
 import moment from "moment";
 import {DeleteOutlined, EditOutlined, EyeOutlined} from "@ant-design/icons";
 import transformIntoBrl from "../../core/utils/transformIntoBrl";
 import DoubleConfirm from "../components/DoubleConfirm";
+import {useHistory, useLocation} from "react-router-dom";
 
 interface EntriesListProps {
     onEdit: (entryId: number) => any;
@@ -13,6 +14,9 @@ interface EntriesListProps {
 }
 
 export default function EntriesList(props: EntriesListProps) {
+    const location = useLocation();
+    const history = useHistory();
+
     const {
         entries,
         fetching,
@@ -24,9 +28,23 @@ export default function EntriesList(props: EntriesListProps) {
         removeEntry
     } = useCashFlow('EXPENSE');
 
+    const didMount = useRef(false);
+
     useEffect(() => {
         fetchEntries();
     }, [fetchEntries]);
+
+    useEffect(() => {
+        if (didMount.current) {
+            const params = new URLSearchParams(location.search);
+            const yearMonth = params.get('yearMonth');
+
+            if (yearMonth) setQuery({yearMonth});
+        } else {
+            didMount.current = true;
+        }
+    }, [location.search, setQuery]);
+
 
     return (
         <Table<CashFlow.EntrySummary>
@@ -70,10 +88,11 @@ export default function EntriesList(props: EntriesListProps) {
                                 format={'YYYY - MMMM'}
                                 allowClear={false}
                                 onChange={
-                                    (date) => setQuery({
-                                        ...query,
-                                        yearMonth: date?.format('YYYY-MM') || moment().format('YYYY-MM')
-                                    })
+                                    (date) => {
+                                        history.push({
+                                            search: `yearMonth=${date?.format('YYYY-MM') || moment().format('YYYY-MM')}`
+                                        })
+                                    }
                                 }
                             />
                         </Card>
