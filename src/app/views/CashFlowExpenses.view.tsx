@@ -20,6 +20,7 @@ import { useState } from 'react';
 import { useCallback } from 'react';
 import EntryCategoryManager from '../features/EntryCategoryManager';
 import EntryForm from '../features/EntryForm';
+import EntryDetails from "../features/EntryDetails";
 const { Title, Text } = Typography;
 
 export default function CashFlowExpensesView() {
@@ -27,14 +28,20 @@ export default function CashFlowExpensesView() {
 
     const [editingEntry, setEditingEntry] = useState<number| undefined>(undefined);
 
+    const [detailedEntry, setDetailedEntry] = useState<number| undefined>(undefined);
+
     const [showCategoryModal, setShowCategoryModal] = useState(false);
     const [showFormModal, setShowFormModal] = useState(false);
+    const [showDetailsModal, setShowDetailsModal] = useState(false);
 
     const openCategoryModal = useCallback(() => setShowCategoryModal(true), []);
     const closeCategoryModal = useCallback(() => setShowCategoryModal(false), []);
 
     const openFormModal = useCallback(() => setShowFormModal(true), []);
     const closeFormModal = useCallback(() => setShowFormModal(false), []);
+
+    const openDetailsModal = useCallback(() => setShowDetailsModal(true), []);
+    const closeDetailsModal = useCallback(() => setShowDetailsModal(false), []);
 
     return (
         <>
@@ -69,6 +76,20 @@ export default function CashFlowExpensesView() {
                         });
                     }}
                 />
+            </Modal>
+            <Modal
+                closeIcon={null}
+                visible={showDetailsModal}
+                onCancel={e => {
+                    closeDetailsModal();
+                }}
+                footer={null}
+                title={'Detalhes da despesa'}
+                destroyOnClose
+            >
+                {
+                   detailedEntry && <EntryDetails entryId={detailedEntry} />
+                }
             </Modal>
             <Row justify={'space-between'} style={{ marginBottom: 16 }}>
                 <DoubleConfirm
@@ -122,6 +143,10 @@ export default function CashFlowExpensesView() {
                 onEdit={(id) => {
                     setEditingEntry(id);
                     openFormModal();
+                }}
+                onDetail={(id) => {
+                    setDetailedEntry(id);
+                    openDetailsModal();
                 }}
             />
         </>
