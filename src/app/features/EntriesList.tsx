@@ -5,6 +5,7 @@ import {useEffect} from "react";
 import moment from "moment";
 import {DeleteOutlined, EditOutlined, EyeOutlined} from "@ant-design/icons";
 import transformIntoBrl from "../../core/utils/transformIntoBrl";
+import DoubleConfirm from "../components/DoubleConfirm";
 
 interface EntriesListProps {
     onEdit: (entryId: number) => any;
@@ -18,7 +19,8 @@ export default function EntriesList(props: EntriesListProps) {
         setQuery,
         query,
         selected,
-        setSelected
+        setSelected,
+        removeEntry
     } = useCashFlow('EXPENSE');
 
     useEffect(() => {
@@ -88,16 +90,28 @@ export default function EntriesList(props: EntriesListProps) {
                 {
                     dataIndex: 'id',
                     title: 'Ações',
-                    align: 'center',
-                    render(id: number) {
+                    align: 'right',
+                    render(id: number, record) {
                         return (
                             <Space>
-                                <Button
-                                    type={'text'}
-                                    size={'small'}
-                                    icon={<DeleteOutlined/>}
-                                    danger
-                                />
+                                <DoubleConfirm
+                                    popConfirmTitle={'Remover despesa?'}
+                                    modalTitle={'Deseja mesmo remover essa despesa?'}
+                                    modalContent={
+                                        'Remover uma despesa pode gerar um impacto negativo no gráfico de receitas e despesas. Esta ação é irreversível'
+                                    }
+                                    onConfirm={async () => {
+                                        await removeEntry(id);
+                                    }}
+                                    disabled={!record.canBeDeleted}
+                                >
+                                    <Button
+                                        type={'text'}
+                                        size={'small'}
+                                        icon={<DeleteOutlined/>}
+                                        danger
+                                    />
+                                </DoubleConfirm>
                                 <Button
                                     type={'text'}
                                     size={'small'}

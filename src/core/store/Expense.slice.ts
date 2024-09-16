@@ -59,6 +59,18 @@ export const updateExpense = createAsyncThunk(
     }
 );
 
+export const removeExpense = createAsyncThunk(
+    'cash-flow/expenses/removeExpense',
+    async (expenseId: number, { dispatch, rejectWithValue }) => {
+        try {
+            await CashFlowService.removeExistingEntry(expenseId);
+            await dispatch(getExpenses());
+        } catch (err: any) {
+            return rejectWithValue({ ...err });
+        }
+    }
+);
+
 export const removeEntriesInBatch = createAsyncThunk(
     'cash-flow/expenses/removeEntriesInBatch',
     async (ids: number[], {dispatch}) => {
