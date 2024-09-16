@@ -56,7 +56,7 @@ export default function CashFlowExpensesView() {
                     setEditingEntry(undefined);
                 }}
                 footer={null}
-                title={'Cadastrar despesa'}
+                title={`${editingEntry ? 'Atualizar' : 'Cadastrar'} despesa`}
                 destroyOnClose
             >
                 <EntryForm

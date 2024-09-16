@@ -1,22 +1,10 @@
-import {
-    Col,
-    Row,
-    Form,
-    Input,
-    DatePicker,
-    Divider,
-    Space,
-    Button,
-    Select, Skeleton,
-} from 'antd';
+import {Button, Col, DatePicker, Divider, Form, Input, Row, Select, Skeleton, Space,} from 'antd';
 import {CashFlow, CashFlowService} from 'tnn-sdk';
-import {useCallback, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import moment, {Moment} from 'moment';
 import CurrencyInput from '../components/CurrencyInput';
 import {useForm} from 'antd/lib/form/Form';
 import useEntriesCategories from '../../core/hooks/useEntriesCategories';
-import {useEffect} from 'react';
-import {useMemo} from 'react';
 import useCashFlow from '../../core/hooks/useCashFlow';
 
 type EntryFormSubmit = Omit<CashFlow.EntryInput, 'transactedOn'> & {
@@ -34,10 +22,10 @@ export default function EntryForm({type, onSuccess, editingEntry}: EntryFormProp
     const [loading, setLoading] = useState(false);
 
     const [form] = useForm();
-    const {revenues, expenses, fetching, fetchCategories} =
+    const {revenues, expenses, fetching, fetchCategories } =
         useEntriesCategories();
 
-    const {createEntry, fetching: fetchingEntries} = useCashFlow(type);
+    const {createEntry, fetching: fetchingEntries, updateEntry} = useCashFlow(type);
 
     useEffect(() => {
         fetchCategories();
@@ -69,12 +57,12 @@ export default function EntryForm({type, onSuccess, editingEntry}: EntryFormProp
                 type,
             };
 
-
-
-            await createEntry(newEntryDTO);
+            editingEntry
+                ? await updateEntry(editingEntry, newEntryDTO)
+                : await createEntry(newEntryDTO);
             onSuccess();
         },
-        [type, createEntry, onSuccess]
+        [type, editingEntry, updateEntry, createEntry, onSuccess]
     );
 
     return loading ? (
@@ -154,7 +142,7 @@ export default function EntryForm({type, onSuccess, editingEntry}: EntryFormProp
                         type={'primary'}
                         htmlType={'submit'}
                     >
-                        Cadastrar despesa
+                        { editingEntry ? 'Atualizar' : 'Cadastrar'} despesa
                     </Button>
                 </Space>
             </Row>

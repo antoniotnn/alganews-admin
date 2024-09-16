@@ -4,6 +4,7 @@ import { CashFlow, CashFlowService } from 'tnn-sdk';
 import moment from 'moment';
 import { RootState } from '.';
 import getThunkStatus from '../utils/getThunkStatus';
+import {getExpenses} from "./Expense.slice";
 
 interface RevenueState {
     list: CashFlow.EntrySummary[];
@@ -40,6 +41,21 @@ export const createRevenue = createAsyncThunk(
             await dispatch(getRevenues());
         } catch (err: any) {
             return rejectWithValue({ ...err });
+        }
+    }
+);
+
+export const updateRevenue = createAsyncThunk(
+    'cash-flow/revenues/updateRevenue',
+    async (
+        {entry, entryId}: { entry: CashFlow.EntryInput, entryId: number },
+        {dispatch, rejectWithValue}
+    ) => {
+        try {
+            await CashFlowService.updateExistingEntry(entryId, entry);
+            await dispatch(getRevenues());
+        } catch (err: any) {
+            return rejectWithValue({...err});
         }
     }
 );

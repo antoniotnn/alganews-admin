@@ -1,8 +1,8 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Key } from 'antd/lib/table/interface';
-import { CashFlow, CashFlowService } from 'tnn-sdk';
+import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {Key} from 'antd/lib/table/interface';
+import {CashFlow, CashFlowService} from 'tnn-sdk';
 import moment from 'moment';
-import { RootState } from '.';
+import {RootState} from '.';
 import getThunkStatus from '../utils/getThunkStatus';
 
 interface ExpenseState {
@@ -25,8 +25,8 @@ const initialState: ExpenseState = {
 
 export const getExpenses = createAsyncThunk(
     'cash-flow/expenses/getExpenses',
-    async (_, { getState, dispatch }) => {
-        const { query } = (getState() as RootState).cashFlow.expense;
+    async (_, {getState, dispatch}) => {
+        const {query} = (getState() as RootState).cashFlow.expense;
         const expenses = await CashFlowService.getAllEntries(query);
         await dispatch(storeList(expenses));
     }
@@ -34,19 +34,34 @@ export const getExpenses = createAsyncThunk(
 
 export const createExpense = createAsyncThunk(
     'cash-flow/expenses/createExpense',
-    async (expense: CashFlow.EntryInput, { dispatch, rejectWithValue }) => {
+    async (expense: CashFlow.EntryInput, {dispatch, rejectWithValue}) => {
         try {
             await CashFlowService.insertNewEntry(expense);
             await dispatch(getExpenses());
         } catch (err: any) {
-            return rejectWithValue({ ...err });
+            return rejectWithValue({...err});
+        }
+    }
+);
+
+export const updateExpense = createAsyncThunk(
+    'cash-flow/expenses/updateExpense',
+    async (
+        {entry, entryId}: { entry: CashFlow.EntryInput, entryId: number },
+        {dispatch, rejectWithValue}
+    ) => {
+        try {
+            await CashFlowService.updateExistingEntry(entryId, entry);
+            await dispatch(getExpenses());
+        } catch (err: any) {
+            return rejectWithValue({...err});
         }
     }
 );
 
 export const removeEntriesInBatch = createAsyncThunk(
     'cash-flow/expenses/removeEntriesInBatch',
-    async (ids: number[], { dispatch }) => {
+    async (ids: number[], {dispatch}) => {
         await CashFlowService.removeEntriesBatch(ids);
         await dispatch(getExpenses());
     }
@@ -54,7 +69,7 @@ export const removeEntriesInBatch = createAsyncThunk(
 
 export const setQuery = createAsyncThunk(
     'cash-flow/expenses/setQuery',
-    async (query: Partial<CashFlow.Query>, { dispatch }) => {
+    async (query: Partial<CashFlow.Query>, {dispatch}) => {
         await dispatch(_setQuery(query));
         await dispatch(getExpenses());
     }
@@ -81,10 +96,11 @@ const expenseSlice = createSlice({
         },
     },
     extraReducers(builder) {
-        const { error, loading, success } = getThunkStatus([
+        const {error, loading, success} = getThunkStatus([
             getExpenses,
             removeEntriesInBatch,
             createExpense,
+            updateExpense
         ]);
 
         builder
