@@ -121,7 +121,7 @@ export default function EntryForm({type, onSuccess, editingEntry}: EntryFormProp
                 </Col>
                 <Col xs={24} lg={12}>
                     <Form.Item
-                        label={'Data de entrada'}
+                        label={type === 'EXPENSE' ? 'Data da saída' : 'Data da entrada'}
                         name={'transactedOn'}
                         rules={[{required: true, message: 'Campo obrigatório'}]}
                     >
@@ -142,7 +142,7 @@ export default function EntryForm({type, onSuccess, editingEntry}: EntryFormProp
                         type={'primary'}
                         htmlType={'submit'}
                     >
-                        { editingEntry ? 'Atualizar' : 'Cadastrar'} despesa
+                        { editingEntry ? 'Atualizar' : 'Cadastrar'} {type === 'EXPENSE' ? 'despesa' : 'receita'}
                     </Button>
                 </Space>
             </Row>

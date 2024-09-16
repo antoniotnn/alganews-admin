@@ -11,9 +11,11 @@ import {useHistory, useLocation} from "react-router-dom";
 interface EntriesListProps {
     onEdit: (entryId: number) => any;
     onDetail: (entryId: number) => any;
+    type: 'EXPENSE' | 'REVENUE';
 }
 
 export default function EntriesList(props: EntriesListProps) {
+    const { type } = props;
     const location = useLocation();
     const history = useHistory();
 
@@ -26,7 +28,7 @@ export default function EntriesList(props: EntriesListProps) {
         selected,
         setSelected,
         removeEntry
-    } = useCashFlow('EXPENSE');
+    } = useCashFlow(type);
 
     const didMount = useRef(false);
 
@@ -115,10 +117,12 @@ export default function EntriesList(props: EntriesListProps) {
                         return (
                             <Space>
                                 <DoubleConfirm
-                                    popConfirmTitle={'Remover despesa?'}
-                                    modalTitle={'Deseja mesmo remover essa despesa?'}
+                                    popConfirmTitle={type === 'EXPENSE' ? 'Deseja mesmo remover essa despesa?' : 'Deseja mesmo remover essa receita?'}
+                                    modalTitle={type === 'EXPENSE' ? 'Remover despesa' : 'Remover receita'}
                                     modalContent={
-                                        'Remover uma despesa pode gerar um impacto negativo no gráfico de receitas e despesas. Esta ação é irreversível'
+                                        type === 'EXPENSE'
+                                            ? 'Remover uma despesa pode gerar um impacto negativo no gráfico de receitas e despesas. Esta ação é irreversível'
+                                            : 'Remover uma receita pode gerar um impacto negativo no gráfico de receitas e despesas. Esta ação é irreversível'
                                     }
                                     onConfirm={async () => {
                                         await removeEntry(id);
