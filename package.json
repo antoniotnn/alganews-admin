@@ -16,6 +16,7 @@
     "antd": "^4.16.8",
     "antd-img-crop": "^3.14.3",
     "antd-mask-input": "^0.1.15",
+    "axios": "^0.21.1",
     "craco-less": "^1.18.0",
     "date-fns": "^2.23.0",
     "lodash.debounce": "^4.0.8",

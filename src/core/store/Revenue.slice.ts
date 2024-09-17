@@ -4,7 +4,6 @@ import { CashFlow, CashFlowService } from 'tnn-sdk';
 import moment from 'moment';
 import { RootState } from '.';
 import getThunkStatus from '../utils/getThunkStatus';
-import {getExpenses} from "./Expense.slice";
 
 interface RevenueState {
     list: CashFlow.EntrySummary[];
