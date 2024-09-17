@@ -13,6 +13,7 @@ import { message, notification } from 'antd';
 import UserDetailsView from './views/UserDetails.view';
 import PaymentDetailsView from './views/PaymentDetails.view';
 import CustomError from "tnn-sdk/dist/utils/CustomError";
+import AuthService from "../auth/Authorization.service";
 
 export default function Routes() {
     useEffect(() => {
@@ -46,6 +47,20 @@ export default function Routes() {
             window.onunhandledrejection = null;
         };
     }, []);
+
+    useEffect(() => {
+        async function identify() {
+            const isInAuthorizationRoute = window.location.pathname === '/authorize';
+            const accessToken = AuthService.getAccessToken();
+
+            if (!accessToken && !isInAuthorizationRoute) {
+                await AuthService.imperativelySendToLoginScreen();
+            }
+        }
+
+        identify();
+    }, []);
+
     return (
         <Switch>
             <Route path={'/'} exact component={HomeView} />
