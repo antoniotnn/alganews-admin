@@ -32,7 +32,7 @@ export default class AuthService {
 
         const encodedData = qs.stringify(data);
 
-        console.log(encodedData);
+        // console.log('encodedData', encodedData);
 
         return authServer.post<OAuthAuthorizationTokenResponse>('/oauth/token', encodedData, {
             headers: {

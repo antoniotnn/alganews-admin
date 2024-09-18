@@ -90,7 +90,7 @@ export default function Routes() {
         }
 
         identify();
-    }, []);
+    }, [history]);
 
     return (
         <Switch>
