@@ -14,7 +14,7 @@ import {
 import { User } from 'tnn-sdk';
 import format from 'date-fns/format';
 import parseISO from 'date-fns/parseISO';
-import { useEffect } from 'react';
+import {useEffect, useState} from 'react';
 import useUsers from '../../core/hooks/useUsers';
 import {
     EyeOutlined,
@@ -24,13 +24,22 @@ import {
 } from '@ant-design/icons';
 import { ColumnProps } from 'antd/lib/table';
 import { Link } from 'react-router-dom';
+import Forbidden from "../components/Forbidden";
 
 export default function UserList() {
     const { users, fetchUsers, toggleUserStatus, fetching } =
         useUsers();
 
+    const [forbidden, setForbidden] = useState(false);
+
     useEffect(() => {
-        fetchUsers();
+        fetchUsers().catch((err) => {
+            if (err?.data?.status === 403) {
+                setForbidden(true);
+                return;
+            }
+            throw err;
+        });
     }, [fetchUsers]);
 
     const getColumnSearchProps = (
@@ -90,6 +99,7 @@ export default function UserList() {
                 : '',
     });
 
+    if (forbidden) return <Forbidden />;
     return (
         <>
             <Row justify='end'>
