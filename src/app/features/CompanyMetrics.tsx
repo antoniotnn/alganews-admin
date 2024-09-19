@@ -1,10 +1,12 @@
 import { Area, AreaConfig } from '@ant-design/charts';
 import { MetricService } from 'tnn-sdk';
-import { useEffect } from 'react';
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import {format, parseISO} from 'date-fns';
 import transformDataIntoAntdChart from '../../core/utils/transformDataIntoAntdChart';
 import {ptBR} from "date-fns/locale";
+import {ForbiddenError} from "tnn-sdk/dist/errors";
+import {Card, Space, Typography} from "antd";
+import {LockFilled} from "@ant-design/icons";
 
 export default function CompanyMetrics() {
     const [data, setData] = useState<
@@ -15,11 +17,38 @@ export default function CompanyMetrics() {
         }[]
     >([]);
 
+    const [forbidden, setForbidden] = useState(false);
+
     useEffect(() => {
         MetricService.getMonthlyRevenuesExpenses()
             .then(transformDataIntoAntdChart)
-            .then(setData);
+            .then(setData)
+            .catch(err => {
+                if (err instanceof ForbiddenError) {
+                    setForbidden(true);
+                    return;
+                }
+                throw err;
+            })
     }, []);
+
+    if (forbidden) {
+        return (
+            <Card style={{ minHeight: 256, display: 'flex', alignItems: 'center' }}>
+                <Space direction={'vertical'}>
+                    <Space align={'center'}>
+                        <LockFilled style={{fontSize: 32}} />
+                        <Typography.Title style={{margin: 0}}>
+                            Acesso negado
+                        </Typography.Title>
+                    </Space>
+                    <Typography.Paragraph>
+                        Você não tem permissão para visualizar estes dados.
+                    </Typography.Paragraph>
+                </Space>
+            </Card>
+        );
+    }
 
     const config: AreaConfig = {
         data,
