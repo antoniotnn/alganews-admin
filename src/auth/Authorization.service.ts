@@ -6,6 +6,13 @@ const authServer = axios.create({
     baseURL: 'http://localhost:8081'
 });
 
+authServer.interceptors.response.use(undefined, async (error) => {
+    if (error.response?.status === 401) {
+        AuthService.imperativelySendToLogout();
+    }
+    return Promise.reject(error);
+});
+
 export interface OAuthAuthorizationTokenResponse {
     access_token: string;
     token_type: 'bearer' | string;
@@ -16,6 +23,13 @@ export interface OAuthAuthorizationTokenResponse {
 }
 
 export default class AuthService {
+
+    public static imperativelySendToLogout() {
+        // window.localStorage.removeItem('accessToken');
+        // limpa o localstorage somente do domínio da própria aplicação (obs: não limpa o localstorage de outros domínios, e se estiver usando o redux persist, limpará os dados dele)
+        window.localStorage.clear();
+        window.location.href = `http://localhost:8081/logout?redirect=http://localhost:3000`;
+    }
 
     public static async getNewToken(config: {
         refreshToken: string,
