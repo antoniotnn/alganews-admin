@@ -8,8 +8,8 @@ import PaymentListView from './views/PaymentList.view';
 import PaymentCreateView from './views/PaymentCreate.view';
 import CashFlowRevenuesView from './views/CashFlowRevenues.view';
 import CashFlowExpensesView from './views/CashFlowExpenses.view';
-import { useEffect } from 'react';
-import { message, notification } from 'antd';
+import {useEffect} from 'react';
+import {message, notification} from 'antd';
 import UserDetailsView from './views/UserDetails.view';
 import PaymentDetailsView from './views/PaymentDetails.view';
 import CustomError from "tnn-sdk/dist/utils/CustomError";
@@ -17,11 +17,12 @@ import AuthService from "../auth/Authorization.service";
 import {useDispatch} from "react-redux";
 import {Authentication} from "../auth/Auth";
 import jwtDecode from "jwt-decode";
-import {fetchUser} from "../core/store/Auth.slice";
+import useAuth from "../core/hooks/useAuth";
 
 export default function Routes() {
     const history = useHistory();
     const dispatch = useDispatch();
+    const { fetchUser } = useAuth();
 
     useEffect(() => {
         window.onunhandledrejection = ({ reason }) => {
@@ -95,14 +96,14 @@ export default function Routes() {
 
             if (accessToken) {
                 const decodedToken: Authentication.AccessTokenDecodedPayload = jwtDecode(accessToken);
-                dispatch(fetchUser(decodedToken['alganews:user_id']));
+                fetchUser(decodedToken['alganews:user_id']);
             }
         }
 
 
 
         identify();
-    }, [dispatch, history]);
+    }, [history]);
 
     return (
         <Switch>
