@@ -30,7 +30,7 @@ export default function useCashFlow(type: CashFlowEntryType){
             type === 'EXPENSE' 
                 ? ExpensesActions.getExpenses() 
                 : RevenuesActions.getRevenues()
-        ),
+        ).unwrap(),
         [dispatch, type]
     );
 
