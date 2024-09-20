@@ -14,9 +14,14 @@ import UserDetailsView from './views/UserDetails.view';
 import PaymentDetailsView from './views/PaymentDetails.view';
 import CustomError from "tnn-sdk/dist/utils/CustomError";
 import AuthService from "../auth/Authorization.service";
+import {useDispatch} from "react-redux";
+import {Authentication} from "../auth/Auth";
+import jwtDecode from "jwt-decode";
+import {fetchUser} from "../core/store/Auth.slice";
 
 export default function Routes() {
     const history = useHistory();
+    const dispatch = useDispatch();
 
     useEffect(() => {
         window.onunhandledrejection = ({ reason }) => {
@@ -87,10 +92,17 @@ export default function Routes() {
 
                 history.push('/');
             }
+
+            if (accessToken) {
+                const decodedToken: Authentication.AccessTokenDecodedPayload = jwtDecode(accessToken);
+                dispatch(fetchUser(decodedToken['alganews:user_id']));
+            }
         }
 
+
+
         identify();
-    }, [history]);
+    }, [dispatch, history]);
 
     return (
         <Switch>
