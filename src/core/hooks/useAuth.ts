@@ -2,7 +2,6 @@ import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../store";
 import {useCallback} from "react";
 import * as AuthActions from "../store/Auth.slice";
-import AuthService from "../../auth/Authorization.service";
 
 export default function useAuth() {
     const dispatch = useDispatch<AppDispatch>();
@@ -12,7 +11,7 @@ export default function useAuth() {
 
     const fetchUser = useCallback((userId: number) => {
         dispatch(AuthActions.fetchUser(userId)).unwrap();
-    }, [dispatch])
+    }, [dispatch]);
 
     return {
         user,
