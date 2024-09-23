@@ -25,9 +25,13 @@ const observeActions: Middleware = () => (next) => (action) => {
 
         const shouldNotify = !ignoredActions.includes(action.type);
 
+        const message = action.meta.rejectedWithValue
+            ? action.payload.message
+            : action.error.message;
+
         if (shouldNotify) {
             notification.error({
-                message: action.error.message,
+                message
             });
         }
     }
