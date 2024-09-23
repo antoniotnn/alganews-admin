@@ -91,6 +91,9 @@ export default function Routes() {
                 AuthService.setAccessToken(access_token);
                 AuthService.setRefreshToken(refresh_token);
 
+                const decodedToken: Authentication.AccessTokenDecodedPayload = jwtDecode(access_token);
+                fetchUser(decodedToken['alganews:user_id']);
+
                 history.push('/');
             }
 
@@ -103,7 +106,7 @@ export default function Routes() {
 
 
         identify();
-    }, [history]);
+    }, [history, fetchUser]);
 
     return (
         <Switch>
