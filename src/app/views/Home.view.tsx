@@ -3,6 +3,7 @@ import {Col, Divider, Row, Space, Typography} from "antd";
 import LatestPosts from "../features/LatestPosts";
 import usePageTitle from "../../core/hooks/usePageTitle";
 import useBreadcrumb from "../../core/hooks/useBreadcrumb";
+import useAuth from "../../core/hooks/useAuth";
 
 const { Title, Paragraph } = Typography;
 
@@ -11,6 +12,8 @@ function HomeView() {
 
     useBreadcrumb('Home');
 
+    const { user } = useAuth();
+
     return (
         <Space
             direction='vertical'
@@ -18,7 +21,7 @@ function HomeView() {
             style={{maxWidth: '100%'}}>
             <Row>
                 <Col span={24}>
-                    <Title level={2}>Olá, José Sousa</Title>
+                    <Title level={2}>Olá, {user?.name}</Title>
                     <Paragraph>
                         Esse é o resumo da empresa nos últimos doze meses
                     </Paragraph>
