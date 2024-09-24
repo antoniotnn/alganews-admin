@@ -7,10 +7,12 @@ import moment from "moment";
 import {Redirect, useHistory, useParams} from "react-router-dom";
 import NotFoundError from "../components/NotFoundError";
 import usePageTitle from "../../core/hooks/usePageTitle";
+import useBreadcrumb from "../../core/hooks/useBreadcrumb";
 
 
 export default function UserEditView() {
     usePageTitle('Edição do usuário');
+    useBreadcrumb('Usuários/Edição');
 
     const params = useParams<{ id: string }>();
     const history = useHistory();

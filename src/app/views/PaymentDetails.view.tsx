@@ -10,9 +10,11 @@ import NotFoundError from '../components/NotFoundError';
 import PaymentBonuses from '../features/PaymentBonuses';
 import PaymentHeader from '../features/PaymentHeader';
 import PaymentPosts from '../features/PaymentPosts';
+import useBreadcrumb from "../../core/hooks/useBreadcrumb";
 
 export default function PaymentDetailsView() {
     usePageTitle('Detalhes do pagamento');
+    useBreadcrumb('Pagamento/Detalhes');
     const params = useParams<{ id: string }>();
     const history = useHistory();
 

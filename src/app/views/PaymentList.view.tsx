@@ -20,8 +20,10 @@ import { SorterResult } from 'antd/lib/table/interface';
 import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
 import DoubleConfirm from '../components/DoubleConfirm';
 import { Link } from 'react-router-dom';
+import useBreadcrumb from "../../core/hooks/useBreadcrumb";
 
 export default function PaymentListView() {
+    useBreadcrumb('Pagamentos/Consulta');
     const { xs } = useBreakpoint();
     const {
         payments,

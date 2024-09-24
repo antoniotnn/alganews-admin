@@ -28,6 +28,7 @@ import NotFoundError from '../components/NotFoundError';
 import usePageTitle from '../../core/hooks/usePageTitle';
 import { useState } from 'react';
 import formatPhone from '../../core/utils/formatPhone';
+import useBreadcrumb from "../../core/hooks/useBreadcrumb";
 
 export default function UserDetailsView() {
     usePageTitle('Detalhes do usuário');
@@ -36,6 +37,8 @@ export default function UserDetailsView() {
     const { lg } = useBreakpoint();
 
     const { user, fetchUser, notFound, toggleUserStatus } = useUser();
+
+    useBreadcrumb(`Usuários/${user?.name || 'Detalhes'}`);
 
     const {
         fetchUserPosts,
