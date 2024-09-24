@@ -29,6 +29,7 @@ import { Moment } from 'moment';
 import CustomError from "tnn-sdk/dist/utils/CustomError";
 import {useHistory} from "react-router-dom";
 import CurrencyInput from "../components/CurrencyInput";
+import useAuth from "../../core/hooks/useAuth";
 const { TabPane } = Tabs;
 
 type UserFormType = {
@@ -57,6 +58,8 @@ export default function UserForm(props: UserFormProps) {
     const [activeTab, setActiveTab] = useState<
         'personal' | 'bankAccount'
     >('personal');
+
+    const { user: authenticatedUser } = useAuth();
 
     const [isEditorRole, setIsEditorRole] = useState(
         props.user?.role === 'EDITOR'
@@ -300,7 +303,7 @@ export default function UserForm(props: UserFormProps) {
                             <Select.Option value={'ASSISTANT'}>
                                 Assistente
                             </Select.Option>
-                            <Select.Option value={'MANAGER'}>
+                            <Select.Option value={'MANAGER'} disabled={authenticatedUser?.role !== 'MANAGER'}>
                                 Gerente
                             </Select.Option>
                         </Select>
