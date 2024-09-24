@@ -11,13 +11,14 @@ import {
 import { CashFlow } from 'tnn-sdk';
 import moment from 'moment';
 import { DeleteOutlined, EyeOutlined, EditOutlined } from '@ant-design/icons';
-import {useEffect, useState} from 'react';
+import { useEffect } from 'react';
 import useCashFlow from '../../core/hooks/useCashFlow';
 import transformIntoBrl from '../../core/utils/transformIntoBrl';
 import DoubleConfirm from '../components/DoubleConfirm';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useRef } from 'react';
-import Forbidden from "../components/Forbidden";
+import { useState } from 'react';
+import Forbidden from '../components/Forbidden';
 
 interface EntriesListProps {
     onEdit: (entryId: number) => any;
@@ -234,6 +235,7 @@ export default function EntriesList(props: EntriesListProps) {
                                         type={'text'}
                                         size={'small'}
                                         icon={<DeleteOutlined />}
+                                        disabled={!record.canBeDeleted}
                                         danger
                                     />
                                 </DoubleConfirm>
@@ -241,6 +243,7 @@ export default function EntriesList(props: EntriesListProps) {
                                     type={'text'}
                                     size={'small'}
                                     icon={<EditOutlined />}
+                                    disabled={!record.canBeEdited}
                                     onClick={() => props.onEdit(id)}
                                 />
                                 <Button
