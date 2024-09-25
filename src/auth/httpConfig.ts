@@ -12,7 +12,8 @@ Service.setRequestInterceptors(async (request) => {
     return request;
 });
 
-Service.setResponseInterceptors(response => response,
+Service.setResponseInterceptors(
+    (response) => response,
     async (error) => {
         // console.dir(error);
         // recupera informações da requisição
@@ -52,5 +53,7 @@ Service.setResponseInterceptors(response => response,
             // retorna uma nova chamada do axios com essa requisição
             return axios(originalRequest);
         }
+
+        throw error;
     }
 );
