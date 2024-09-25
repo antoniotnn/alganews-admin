@@ -32,7 +32,7 @@ Service.setResponseInterceptors(response => response,
 
             // caso algum não exista, não é possível renovar o token
             if (!codeVerifier || !refreshToken) {
-                window.alert('TODO: Implementar redirecionamento para a tela de login');
+                AuthService.imperativelySendToLogout();
                 return;
             }
 
