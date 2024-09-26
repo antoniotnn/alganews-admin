@@ -20,6 +20,8 @@ import jwtDecode from "jwt-decode";
 import useAuth from "../core/hooks/useAuth";
 import GlobalLoading from "./components/GlobalLoading";
 
+const APP_BASE_URL = process.env.REACT_APP_BASE_URL;
+
 export default function Routes() {
     const history = useHistory();
     const location = useLocation();
@@ -88,7 +90,7 @@ export default function Routes() {
                 const { access_token, refresh_token } = await AuthService.getFirstAccessTokens({
                     code,
                     codeVerifier,
-                    redirectUri: 'http://localhost:3000/authorize'
+                    redirectUri: `${APP_BASE_URL}/authorize`
                 });
 
                 AuthService.setAccessToken(access_token);
